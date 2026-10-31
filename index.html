@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Портфолио ИИ-креатора: обучающие посты с креативами, видео и промптами, уроки и разборы, приложение «Время игры».">
+<meta name="theme-color" content="#F2F0E6">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Портфолио neiromelon">
+<meta property="og:description" content="Делаю креативы с ИИ и объясняю, как их повторить.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23DA9E38'/%3E%3Ctext x='16' y='21.5' text-anchor='middle' font-size='15' font-family='sans-serif' font-weight='700' fill='%233B201A'%3En%3C/text%3E%3C/svg%3E">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Портфолио neiromelon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky bar over a live canvas background (soft orbs that react to the pointer), hero with offset creative mosaic, masonry of post covers.
+   Each cover opens a full-screen "post reader": viewer on the left, the post's own text on the right. */
+:root{
+  --bg:#F2F0E6; --surface:#FBFAF5; --ink:#3B201A; --muted:#75605A; --line:#DCD5C2;
+  --chip:#E6E1D0; --soft:#E0E4EE; --accent:#DA9E38; --accent-ink:#8F4A33; --code:#EAE5D4; --on-accent:#3B201A;
+  --shadow:0 18px 40px -22px rgba(94,52,43,.45);
+  --ph-sh:0 1px 2px rgba(59,32,26,.14),0 10px 20px -10px rgba(59,32,26,.34),0 26px 48px -24px rgba(165,101,78,.5);
+  --ph-sh-hover:0 2px 4px rgba(59,32,26,.16),0 16px 30px -12px rgba(59,32,26,.38),0 34px 64px -24px rgba(218,158,56,.7);
+  --ph-sh-sm:0 1px 2px rgba(59,32,26,.18),0 5px 10px -5px rgba(59,32,26,.35);
+  --ph-rim:inset 0 0 0 1px rgba(255,255,255,.3);
+  --f-display:'Unbounded','Onest',system-ui,sans-serif;
+  --f-body:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1E1411; --surface:#2A1D19; --ink:#F2F0E6; --muted:#B8A79E; --line:#43302A;
+  --chip:#33241F; --soft:#2A3042; --accent:#DA9E38; --accent-ink:#E9B964; --code:#251915; --on-accent:#2A1712;
+  --shadow:0 18px 40px -22px rgba(0,0,0,.75);
+  --ph-sh:0 1px 2px rgba(0,0,0,.6),0 12px 24px -10px rgba(0,0,0,.7),0 26px 52px -24px rgba(218,158,56,.30);
+  --ph-sh-hover:0 2px 4px rgba(0,0,0,.6),0 18px 34px -12px rgba(0,0,0,.75),0 36px 68px -22px rgba(218,158,56,.5);
+  --ph-sh-sm:0 1px 2px rgba(0,0,0,.6),0 5px 10px -5px rgba(0,0,0,.7);
+  --ph-rim:inset 0 0 0 1px rgba(255,255,255,.1); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1E1411; --surface:#2A1D19; --ink:#F2F0E6; --muted:#B8A79E; --line:#43302A;
+  --chip:#33241F; --soft:#2A3042; --accent:#DA9E38; --accent-ink:#E9B964; --code:#251915; --on-accent:#2A1712;
+  --shadow:0 18px 40px -22px rgba(0,0,0,.75);
+  --ph-sh:0 1px 2px rgba(0,0,0,.6),0 12px 24px -10px rgba(0,0,0,.7),0 26px 52px -24px rgba(218,158,56,.30);
+  --ph-sh-hover:0 2px 4px rgba(0,0,0,.6),0 18px 34px -12px rgba(0,0,0,.75),0 36px 68px -22px rgba(218,158,56,.5);
+  --ph-sh-sm:0 1px 2px rgba(0,0,0,.6),0 5px 10px -5px rgba(0,0,0,.7);
+  --ph-rim:inset 0 0 0 1px rgba(255,255,255,.1); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px;
+  -webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60}
+body.lock{overflow:hidden}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;display:block}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent-ink);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1180px;margin-inline:auto}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--bg) 94%,transparent);
+  margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));
+  padding-inline:max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:56px}
+.brand{font-family:var(--f-display);font-weight:600;font-size:15px;text-decoration:none;letter-spacing:-.01em}
+.brand span{color:var(--accent-ink)}
+.top nav{margin-left:auto;display:flex;gap:22px;font-size:14px}
+.top .btn.sm{height:36px;padding:0 16px}
+.top nav a{text-decoration:none;color:var(--muted)}
+.top nav a:hover{color:var(--ink)}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;flex:none}
+.icon-btn:hover{background:var(--chip)}
+.icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-block:56px 40px}
+.hero h1{font-family:var(--f-display);font-weight:600;font-size:clamp(28px,4.6vw,54px);line-height:1.08;letter-spacing:-.025em;margin:14px 0 20px;text-wrap:balance}
+.hero h1 em{font-style:normal;background:var(--accent);color:var(--on-accent);padding:0 .14em;border-radius:6px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.hero p.lead{font-size:18px;color:var(--muted);max-width:52ch;margin:0 0 28px;text-wrap:pretty}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 22px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.primary:hover{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.ghost:hover{background:var(--chip)}
+.stats{display:flex;flex-wrap:wrap;gap:8px 28px;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.stats b{color:var(--ink);font-weight:500;font-size:20px;margin-right:6px;font-variant-numeric:tabular-nums}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.chip{font-family:var(--f-mono);font-size:12px;padding:4px 10px;border-radius:999px;background:var(--chip);color:var(--ink);white-space:nowrap}
+.mosaic{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}
+.mosaic .col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.mosaic .col:nth-child(2){margin-top:44px}
+.mosaic button{display:block;overflow:hidden;border-radius:4px;background:var(--chip);box-shadow:var(--shadow);aspect-ratio:3/4}
+.mosaic img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+.mosaic button:hover img{transform:scale(1.04)}
+@media (prefers-reduced-motion:no-preference){
+  .mosaic .col:nth-child(1){animation:drift 9s ease-in-out infinite alternate}
+  .mosaic .col:nth-child(2){animation:drift 11s ease-in-out infinite alternate-reverse}
+  @keyframes drift{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+}
+
+/* sections */
+section{padding-block:56px 8px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:28px}
+h2.sec{font-family:var(--f-display);font-weight:500;font-size:clamp(24px,3.4vw,38px);line-height:1.1;letter-spacing:-.02em;margin:8px 0 0;text-wrap:balance}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{height:38px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);font-size:14px;font-weight:500;display:inline-flex;gap:8px;align-items:center}
+.filters button span{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.filters button:hover{border-color:var(--ink)}
+.filters button{background:color-mix(in srgb,var(--surface) 60%,transparent)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filters button[aria-pressed="true"] span{color:inherit;opacity:.7}
+
+.grid{columns:3 300px;column-gap:20px}
+.card{break-inside:avoid;margin:0 0 24px;display:block;width:100%;text-align:left}
+.card .pic{position:relative;overflow:hidden;border-radius:4px;background:var(--chip)}
+.card .pic img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.card:hover .pic img{transform:scale(1.04)}
+.card .num{position:absolute;left:10px;top:10px;font-family:var(--f-mono);font-size:12px;background:var(--bg);color:var(--ink);padding:3px 8px;border-radius:999px}
+.card .play{position:absolute;right:10px;top:10px;font-family:var(--f-mono);font-size:12px;background:var(--accent);color:var(--on-accent);padding:3px 8px;border-radius:999px}
+.card h3{font-family:var(--f-display);font-weight:500;font-size:15px;line-height:1.25;letter-spacing:-.01em;margin:14px 0 6px;text-wrap:balance}
+.card:hover h3{color:var(--accent-ink)}
+.card p{margin:0 0 10px;font-size:14px;color:var(--muted);text-wrap:pretty}
+.card .tl{display:flex;flex-wrap:wrap;gap:6px}
+.card.hide{display:none}
+
+/* formula */
+.formula{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.step{background:color-mix(in srgb,var(--surface) 88%,transparent);border:1px solid var(--line);border-radius:10px;padding:22px 20px;text-align:left;display:flex;flex-direction:column;gap:10px;min-width:0;transition:transform .2s,border-color .2s}
+.step:hover{transform:translateY(-3px);border-color:var(--ink)}
+.step .n{font-family:var(--f-mono);font-size:12px;color:var(--accent-ink)}
+.step h3{font-family:var(--f-display);font-weight:500;font-size:17px;margin:0;letter-spacing:-.01em}
+.step p{margin:0;color:var(--muted);font-size:14px}
+.step q{display:block;font-family:var(--f-mono);font-size:12.5px;line-height:1.5;background:var(--code);padding:10px 12px;border-radius:6px;quotes:none;overflow-wrap:anywhere;margin-top:auto}
+.step .go{font-size:13px;font-weight:600;color:var(--accent-ink)}
+
+/* about */
+.about{display:grid;grid-template-columns:.85fr 1.15fr;gap:64px;align-items:center}
+.portrait{position:relative;width:100%;max-width:400px;aspect-ratio:3/4;margin-inline:auto}
+.arch{position:absolute;inset:0;border-radius:999px 999px 10px 10px;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.arch.back{background:var(--accent);transform:translate(-18px,16px) rotate(-4deg)}
+.arch.ring{border:2px solid var(--ink);transform:translate(16px,-12px) rotate(3deg)}
+.arch.photo{overflow:hidden;background:var(--chip)}
+.arch.photo img{width:100%;height:100%;object-fit:cover}
+.portrait:hover .arch.back{transform:translate(-26px,22px) rotate(-6deg)}
+.portrait:hover .arch.ring{transform:translate(22px,-16px) rotate(5deg)}
+.badge{position:absolute;right:-30px;bottom:34px;width:128px;height:128px;z-index:3}
+.badge svg{position:absolute;inset:0;width:100%;height:100%;will-change:transform}
+.badge text{font-family:var(--f-mono);font-size:9.6px;letter-spacing:.09em;fill:var(--ink);text-transform:uppercase}
+.badge .core{position:absolute;inset:27%;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:20px;box-shadow:var(--ph-sh-sm)}
+@media (prefers-reduced-motion:no-preference){.badge svg{animation:spin 26s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}}
+.sticker{position:absolute;z-index:3;font-family:var(--f-mono);font-size:12px;background:var(--soft);color:var(--ink);padding:6px 12px;border-radius:999px;box-shadow:var(--ph-sh-sm)}
+.sticker.s1{left:-22px;top:18%;transform:rotate(-6deg)}
+.sticker.s2{left:-10px;bottom:22%;transform:rotate(4deg);background:var(--accent);color:var(--on-accent)}
+.about p.big{font-size:20px;line-height:1.45;margin:14px 0 26px;text-wrap:pretty}
+.rows{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:150px 1fr auto;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline;text-align:left;width:100%}
+.row h3{font-family:var(--f-display);font-weight:500;font-size:15px;margin:0}
+.row p{margin:0;color:var(--muted);font-size:14.5px}
+.row .arrow{color:var(--accent-ink);font-weight:600}
+button.row:hover h3,a.row:hover h3{color:var(--accent-ink)}
+a.row{text-decoration:none;color:inherit}
+
+#about{overflow-x:clip}
+
+/* scroll reveal: elements rise into place, they are always visible */
+.rv:not(.in){translate:0 22px}
+.rv.in{animation:rise .75s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{translate:0 22px}to{translate:0 0}}
+@media (prefers-reduced-motion:reduce){.rv:not(.in){translate:none}.rv.in{animation:none}}
+h2.sec::after{content:"";display:block;height:6px;width:0;background:var(--accent);border-radius:3px;margin-top:12px;transition:width .9s cubic-bezier(.2,.7,.2,1) .15s}
+.sec-head.in h2.sec::after{width:72px}
+.solo{max-width:340px;margin-inline:auto}
+.solo .vbox{aspect-ratio:9/16}
+
+/* app */
+.appgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.apptext p.big{font-size:19px;line-height:1.5;margin:0 0 22px;text-wrap:pretty}
+.afacts{list-style:none;margin:0 0 26px;padding:0;border-top:1px solid var(--line)}
+.afacts li{display:grid;grid-template-columns:170px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.afacts b{font-family:var(--f-display);font-weight:500;font-size:14px}
+.afacts span{color:var(--muted)}
+.apptext .cap{margin-top:0;max-width:52ch}
+.phone{width:min(100%,330px);margin-inline:auto;border-radius:38px;border:9px solid #1F2A37;background:#F4F7FB;color:#1F2A37;overflow:hidden;box-shadow:var(--shadow);color-scheme:light;font-size:14px;transform:rotate(2deg)}
+
+/* teach */
+.teach{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.tcard{display:flex;flex-direction:column;background:color-mix(in srgb,var(--surface) 90%,transparent);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
+.tcard .tp{aspect-ratio:16/9;overflow:hidden;background:var(--chip)}
+.tcard .tp img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.tcard:hover .tp img{transform:scale(1.04)}
+.tcard .tb{padding:22px;display:flex;flex-direction:column;gap:12px;flex:1}
+.tcard h3{font-family:var(--f-display);font-weight:500;font-size:19px;line-height:1.2;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.tcard p{margin:0;color:var(--muted);font-size:15px}
+.tcard .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:6px}
+.btn.sm{height:40px;padding:0 18px;font-size:14px}
+
+/* contact */
+.cbox{background:var(--ink);color:var(--bg);border-radius:16px;padding:clamp(24px,5vw,56px);display:grid;grid-template-columns:1fr 1fr;gap:32px 48px}
+.cbox h2{font-family:var(--f-display);font-weight:500;font-size:clamp(24px,3.6vw,42px);line-height:1.08;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}
+.cbox p{margin:0;opacity:.78;max-width:38ch}
+.cline{display:flex;flex-direction:column;gap:6px;padding:16px 0;border-top:1px solid color-mix(in srgb,var(--bg) 22%,transparent)}
+.cline:first-child{border-top:0;padding-top:0}
+.cline small{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.65}
+.cline .val{font-family:var(--f-display);font-weight:500;font-size:clamp(17px,2.4vw,24px);overflow-wrap:anywhere}
+.cline .acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.cbox .btn{border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+.cbox .btn:hover{background:var(--bg);border-color:var(--bg)}
+.cbox .copy{background:transparent;color:var(--bg);border:1.5px solid color-mix(in srgb,var(--bg) 45%,transparent);height:40px;padding:0 16px;font-size:14px}
+.cbox .copy:hover,.cbox .copy.ok{background:var(--bg);color:var(--ink)}
+.links{display:flex;flex-wrap:wrap;gap:10px}
+
+/* photo depth: soft layered shadows, a faint sheen, a warm glow on hover */
+.card .pic,.mosaic button,.frame,.vbox,.refimg,.arch.photo{box-shadow:var(--ph-sh),var(--ph-rim)}
+.film .thumbs button,.car .strip button{box-shadow:var(--ph-sh-sm)}
+.tcard,.phone{box-shadow:var(--ph-sh)}
+.card .pic{transition:box-shadow .4s ease,transform .4s ease}
+.card:hover .pic{box-shadow:var(--ph-sh-hover),var(--ph-rim);transform:translateY(-3px)}
+.mosaic button{position:relative;transition:box-shadow .4s ease}
+.mosaic button:hover{box-shadow:var(--ph-sh-hover),var(--ph-rim)}
+.tcard .tp{position:relative}
+.card .pic::after,.mosaic button::after,.tcard .tp::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(155deg,rgba(255,255,255,.16),rgba(255,255,255,0) 40%,rgba(59,32,26,.10))}
+.phone{cursor:zoom-in}
+.phone img{display:block;width:100%;height:auto}
+.statnote{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin:10px 0 0}
+.toolslbl{margin-top:22px}
+.toolslbl+.tools{margin-top:10px}
+footer{margin-top:72px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+
+/* reader */
+.reader{position:fixed;inset:0;z-index:70;background:var(--bg);overflow-y:auto;overscroll-behavior:contain;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);animation:rin .28s ease}
+@keyframes rin{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.reader{animation:none}}
+.r-bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 95%,transparent);
+  margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.r-bar .wrap{display:flex;align-items:center;gap:12px;height:56px}
+.r-bar .back{font-weight:600;font-size:14px;display:inline-flex;gap:8px;align-items:center;height:36px;padding:0 14px 0 10px;border-radius:999px;border:1.5px solid var(--line)}
+.r-bar .back:hover{border-color:var(--ink)}
+.r-count{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-left:auto}
+.r-head{padding-block:28px 24px}
+.r-head h2{font-family:var(--f-display);font-weight:500;font-size:clamp(22px,3.2vw,36px);line-height:1.12;letter-spacing:-.02em;margin:14px 0 0;max-width:24ch;text-wrap:balance}
+.r-head .tl{display:flex;flex-wrap:wrap;gap:6px}
+.r-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:44px;align-items:start;padding-bottom:48px}
+.r-view{position:sticky;top:76px;min-width:0}
+.r-text{min-width:0;display:flex;flex-direction:column;gap:30px}
+.lbl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.hook{font-size:clamp(18px,2vw,21px);line-height:1.45;font-weight:500;margin:0;text-wrap:pretty}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s;border-top:1px solid var(--line)}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:6px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.steps li::before{content:counter(s,decimal-leading-zero);font-family:var(--f-mono);font-size:12px;color:var(--accent-ink);padding-top:3px}
+.note{background:var(--soft);border-radius:8px;padding:14px 16px;font-size:14.5px;margin:0}
+.closing{font-family:var(--f-display);font-weight:400;font-size:16px;line-height:1.5;margin:0;text-wrap:pretty}
+
+.prompt{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:10px;overflow:hidden}
+.prompt summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:600;font-size:14.5px}
+.prompt summary::-webkit-details-marker{display:none}
+.prompt summary .t{flex:1;min-width:0}
+.prompt summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s;margin:0 4px 4px 0;flex:none}
+.prompt[open] summary::after{transform:rotate(-135deg);margin-bottom:-4px}
+.prompt .pb{padding:0 14px 14px}
+.prompt .pn{font-size:14px;color:var(--muted);margin:0 0 10px}
+.prompt pre{margin:0;font-family:var(--f-mono);font-size:12.5px;line-height:1.6;background:var(--code);border-radius:8px;padding:14px;max-height:280px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:2}
+.copy{flex:none;height:30px;padding:0 12px;border-radius:999px;background:var(--ink);color:var(--bg);font-size:12.5px;font-weight:600}
+.copy:hover{background:var(--accent);color:var(--on-accent)}
+.copy.ok{background:var(--accent);color:var(--on-accent)}
+
+.pager{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.pager button{display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface);min-width:0}
+.pager button:hover{border-color:var(--ink)}
+.pager small{font-family:var(--f-mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager span{font-family:var(--f-display);font-size:13.5px;font-weight:500;line-height:1.3}
+.pager .next{text-align:right}
+
+/* viewers */
+.frame{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;position:relative;display:grid;place-items:center}
+.zoomable{cursor:zoom-in;display:block;width:100%}
+.frame img{max-height:76vh;width:auto;max-width:100%;margin-inline:auto;object-fit:contain}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:4px;scrollbar-width:thin}
+.tabs button{flex:none;height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);font-size:13.5px;font-weight:500;white-space:nowrap}
+.tabs button:hover{border-color:var(--ink)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pair figure,.film figure{margin:0;min-width:0}
+.pair figcaption,.film figcaption,.cap{font-size:13px;color:var(--muted);margin-top:8px;text-wrap:pretty}
+.film .thumbs{display:grid;gap:8px;margin-top:10px;grid-template-columns:repeat(var(--n),1fr)}
+.film .thumbs button{border:1.5px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface);text-align:left;opacity:.72}
+.film .thumbs button[aria-current="true"]{border-color:var(--ink);opacity:1}
+.film .thumbs img{width:100%;aspect-ratio:1;object-fit:cover}
+.film .thumbs span{display:block;font-size:11.5px;padding:6px 8px;line-height:1.25}
+.car .stage{aspect-ratio:var(--ratio)}
+.car .stage img{max-height:100%;height:100%;object-fit:contain}
+.car .arr{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;box-shadow:var(--shadow);z-index:2}
+.car .arr:hover{background:var(--accent);border-color:var(--accent)}
+.car .arr.l{left:10px}.car .arr.r{right:10px}
+.car .arr svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.car .ct{position:absolute;right:10px;bottom:10px;font-family:var(--f-mono);font-size:12px;background:var(--bg);padding:3px 9px;border-radius:999px;z-index:2}
+.car .strip{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:6px}
+.car .strip button{flex:none;width:58px;height:58px;border:1.5px solid var(--line);border-radius:5px;overflow:hidden;opacity:.7}
+.car .strip button[aria-current="true"]{border-color:var(--ink);opacity:1}
+.car .strip img{width:100%;height:100%;object-fit:cover}
+.vids{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+.refwide{margin:0 0 10px}
+.vids figure{margin:0;min-width:0}
+.vbox{position:relative;border-radius:6px;overflow:hidden;background:#000;aspect-ratio:9/16}
+.vbox video{width:100%;height:100%;object-fit:cover;display:block}
+.vbox .snd{position:absolute;right:8px;bottom:8px;height:30px;padding:0 10px;border-radius:999px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:600}
+.vids .refimg{border-radius:6px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.refwide .refimg img{width:100%;max-height:150px;object-fit:contain}
+.vctl{display:flex;gap:8px;margin:12px 0 10px;align-items:center}
+.vctl button{height:34px;padding:0 14px;border-radius:999px;border:1.5px solid var(--ink);font-size:13px;font-weight:600}
+.vctl button:hover{background:var(--chip)}
+.segs{display:grid;gap:6px}
+.seg{display:grid;grid-template-columns:62px 1fr;gap:10px;text-align:left;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);transition:background .2s,border-color .2s}
+.seg .tm{font-family:var(--f-mono);font-size:12px;color:var(--muted);padding-top:2px}
+.seg b{display:block;font-size:14px}
+.seg span.d{display:block;font-size:13px;color:var(--muted)}
+.seg[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.seg[aria-current="true"] .tm,.seg[aria-current="true"] .d{color:var(--on-accent)}
+
+.zoom{position:fixed;inset:0;z-index:90;background:rgba(10,12,11,.92);display:grid;place-items:center;padding:20px;cursor:zoom-out}
+.zoom img{max-width:100%;max-height:100%;object-fit:contain;border-radius:3px}
+.zoom button{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));width:42px;height:42px;border-radius:50%;background:#fff;color:#111;font-size:22px;line-height:1}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;font-weight:600;z-index:100}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:32px;padding-block:36px 24px}
+  .formula{grid-template-columns:1fr 1fr}
+  .about{grid-template-columns:1fr;gap:32px}
+  .r-grid{grid-template-columns:1fr;gap:28px}
+  .r-view{position:static}
+  .top nav{display:none}
+  .top .btn.sm{margin-left:auto}
+  .teach,.appgrid{grid-template-columns:1fr}
+  .appgrid{gap:36px}
+  .afacts li{grid-template-columns:1fr;gap:2px}
+  .cbox{grid-template-columns:1fr}
+  .portrait{width:76%}
+  .badge{right:-14px;width:96px;height:96px}
+  .sticker.s1{left:-6px}
+}
+@media (max-width:560px){
+  .grid{columns:2 150px;column-gap:12px}
+  .card h3{font-size:13px}
+  .card p{display:none}
+  .formula{grid-template-columns:1fr}
+  .row{grid-template-columns:1fr auto}
+  .row p{grid-column:1/-1;grid-row:2}
+  .pager{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+
+<canvas id="bg" aria-hidden="true"></canvas>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top" id="top-link">neiromelon<span>_ai</span></a>
+  <nav aria-label="Разделы"><a href="#works">Работы</a><a href="#teach">Обучение</a><a href="#formula">Подача</a><a href="#about">Обо мне</a><a href="#app">Приложение</a></nav>
+  <a class="btn primary sm" href="#contact">Написать</a>
+  <button class="icon-btn" id="theme" type="button" aria-label="Сменить тему"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+</div></header>
+
+<main id="top">
+  <div class="hero wrap">
+    <div>
+      <div class="eyebrow">Портфолио ИИ-креатора</div>
+      <h1>Делаю креативы с ИИ и <em>объясняю</em>, как их повторить</h1>
+      <p class="lead">Обучающие посты с готовыми креативами, пошаговым разбором и промптом, который можно скопировать. Работаю с брендами и обучаю этому, увлекаюсь креативным видео и вайбкодингом.</p>
+      <div class="cta"><a class="btn primary" href="#works">Смотреть работы</a><a class="btn ghost" href="#formula">Как я строю посты</a></div>
+      <div class="stats" id="stats"></div>
+      <div class="eyebrow toolslbl">Навыки и инструменты</div>
+      <div class="tools" id="tools" aria-label="Навыки и инструменты"></div>
+    </div>
+    <div class="mosaic" id="mosaic"></div>
+  </div>
+
+  <section id="works" class="wrap">
+    <div class="sec-head">
+      <div><div class="eyebrow">Обучающие посты</div><h2 class="sec">Работы</h2></div>
+      <div class="filters" id="filters" role="group" aria-label="Фильтр по теме"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="teach" class="wrap">
+    <div class="sec-head"><div><div class="eyebrow">Обучение</div><h2 class="sec">Уроки и разборы</h2></div></div>
+    <div class="teach">
+      <article class="tcard"><div class="tp"><img src="img1/brand-2.webp" alt="" loading="lazy"></div><div class="tb"><h3>Уроки по работе с нижним бельём</h3><p>Обучаю создавать для брендов съёмки нижнего белья в нейросетях. Пример урока открывается по ссылке, а идеи и сеты из практики собраны в постах.</p><div class="acts"><a class="btn primary sm" href="https://disk.yandex.ru/i/KW2oX9boj-5MTw" target="_blank" rel="noopener">Пример урока ↗</a><button class="btn ghost sm" type="button" data-open="lingerie5">Пост с идеями</button></div></div></article>
+      <article class="tcard"><div class="tp"><img src="img3/raz-1.webp" alt="" loading="lazy"></div><div class="tb"><h3>Разборы видеороликов</h3><p>Пошагово показываю, как сделан ролик: персонажи, сцены, промпты. Пример разбора открывается по ссылке, а пост к нему — здесь.</p><div class="acts"><a class="btn primary sm" href="https://disk.yandex.ru/d/2PxcldsHXMVTxQ" target="_blank" rel="noopener">Пример разбора ↗</a><button class="btn ghost sm" type="button" data-open="breakdown">Пост о разборе</button></div></div></article>
+    </div>
+  </section>
+
+  <section id="formula" class="wrap">
+    <div class="sec-head"><div><div class="eyebrow">Подача</div><h2 class="sec">Как я подаю информацию</h2></div></div>
+    <div class="formula" id="formulaGrid"></div>
+  </section>
+
+  <section id="about" class="wrap">
+    <div class="about">
+      <div class="portrait" id="portrait">
+        <div class="arch back" aria-hidden="true"></div><div class="arch ring" aria-hidden="true"></div>
+        <div class="arch photo"><img src="img3/me-ai.webp" alt="Портрет автора" loading="lazy"></div>
+        <div class="badge" aria-hidden="true"><svg viewBox="0 0 120 120"><defs><path id="circ" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/></defs><text><textPath href="#circ" textLength="290">ИИ-креатор · бренды · обучение · видео ·</textPath></text></svg><span class="core">AI</span></div>
+        <span class="sticker s1" aria-hidden="true">бренды</span><span class="sticker s2" aria-hidden="true">видео</span>
+      </div>
+      <div>
+        <div class="eyebrow">Обо мне</div>
+        <p class="big">Я ИИ-креатор. Работаю с брендами и обучаю этому: собираю рекламные кадры, лукбуки, видео и технические эскизы в нейросетях и объясняю, как повторить каждый шаг.</p>
+        <div class="rows">
+          <button class="row" type="button" data-open="bags"><h3>Бренды</h3><p>Сумки Mark Levillen в кампании с героинями сериала, технические эскизы по фото изделий, паттерны для коллекций, съёмки белья.</p><span class="arrow">→</span></button>
+          <button class="row" type="button" data-open="video"><h3>Креативное видео</h3><p>Фэшн-ролик по фото изделия и киношная сцена с героями, которые выглядят одинаково во всех кадрах.</p><span class="arrow">→</span></button>
+          <a class="row" href="#teach"><h3>Обучение</h3><p>Уроки по нижнему белью и разборы видеороликов.</p><span class="arrow">→</span></a>
+          <a class="row" href="#app"><h3>Вайбкодинг</h3><p>Изучаю вайбкодинг — мне интересно это направление. Приложение «Время игры» и этот сайт — лишь примеры: идея и материалы мои, код пишу вместе с Claude.</p><span class="arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="app" class="wrap">
+    <div class="sec-head"><div><div class="eyebrow">Ещё один пример того, что я создаю</div><h2 class="sec">Приложение «Время игры»</h2></div></div>
+    <div class="appgrid">
+      <div class="apptext">
+        <p class="big">Я разработала приложение для детей и школьников, которое превращает задания в минуты игры: выполняй задания и получай минуты на планшет.</p>
+        <ul class="afacts">
+          <li><b>Новое задание</b><span>название и награда от +1 до +60 минут</span></li>
+          <li><b>Список заданий</b><span>выполненное отмечается галочкой, минуты копятся</span></li>
+          <li><b>Таймер</b><span>старт, сброс и сигнал «Время вышло!»</span></li>
+          <li><b>На экране телефона</b><span>приложение можно добавить на главный экран</span></li>
+        </ul>
+        <div class="cta"><a class="btn primary" href="https://dariatatrinceva.github.io/delu-vremya" target="_blank" rel="noopener">Открыть приложение ↗</a></div>
+        <p class="cap">Справа скриншот приложения: нажмите, чтобы увеличить. Само приложение откроется по ссылке.</p>
+      </div>
+      <div class="demo"><div class="phone" data-zoomimg="img1/app.webp" role="img" aria-label="Скриншот приложения «Время игры»"><img src="img1/app.webp" alt="Скриншот приложения «Время игры»" loading="lazy" width="588" height="1192"></div></div>
+    </div>
+  </section>
+
+  <section id="contact" class="wrap">
+    <div class="cbox">
+      <div><div class="eyebrow" style="color:inherit;opacity:.65">Контакты</div><h2 style="margin-top:10px">Давайте делать контент вместе</h2><p>Пишите по сотрудничеству, работе с брендами и обучению.</p></div>
+      <div>
+        <div class="cline"><small>Telegram</small><span class="val">@darmelon</span><div class="acts"><a class="btn sm" href="https://t.me/darmelon" target="_blank" rel="noopener">Написать ↗</a><button class="copy" type="button" data-copytext="@darmelon">Скопировать</button></div></div>
+        <div class="cline"><small>Почта</small><span class="val">daria_sliva@mail.ru</span><div class="acts"><button class="copy" type="button" data-copytext="daria_sliva@mail.ru">Скопировать</button></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wrap"><span>© neiromelon_ai</span><span>Все креативы и тексты постов — мои работы</span></footer>
+</main>
+
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="r-title" hidden>
+  <div class="r-bar"><div class="wrap">
+    <button class="back" id="rBack" type="button"><span aria-hidden="true">←</span> Все работы</button>
+    <span class="r-count" id="rCount"></span>
+  </div></div>
+  <div class="wrap">
+    <div class="r-head"><div class="tl" id="rTags"></div><h2 id="r-title"></h2></div>
+    <div class="r-grid"><div class="r-view" id="rView"></div><div class="r-text" id="rText"></div></div>
+  </div>
+</div>
+<div class="zoom" id="zoom" hidden><img alt=""><button type="button" aria-label="Закрыть">×</button></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const DATA={"cases": [{"id": "bags", "title": "Мини-кампания с героинями сериала и брендовыми сумками", "short": "Героини «Отчаянных домохозяйек» с сумками Mark Levillen: фотосессия, реплики и вёрстка как в глянце", "cat": ["photo", "brand"], "tools": ["SYNTX", "Nano Banana", "Gemini", "Canva"], "cover": "bags-1", "hook": "Разбираем креативный кейс для бренда: как создать фотосессию с персонажами из сериалов и показать реальные брендовые вещи. Это показывает, что продукт — часть истории, характера, стиля.", "steps": ["SYNTX → Дизайн → Nano Banana. Загружаем референс изделия, подходящий по характеру персонажа (сумка, обувь, украшение), чтобы ИИ точно повторил детали.", "Пишем детальный промпт для рекламного фото героини. Nano Banana узнаёт персонажей по имени и сам воссоздаёт внешность, манеру и характер.", "Реплики подбирает текстовый ИИ (я брала Gemini): загружаем готовые фото и просим объяснить, почему эта сумка подходит именно героине, и придумать реплику в её стиле.", "Экспортируем кадры в Canva и добавляем имя героини крупным шрифтом, реплику, логотип бренда и свой хештег."], "closing": "Получается не просто коллаж, а мини-кампания, как в модном журнале. Героя можно взять любого: главное, чтобы он «жил» в кадре, а бренд был частью его истории.", "viewer": {"kind": "carousel", "ratio": "4/5", "items": [{"img": "bags-1", "cap": "Bloom: Габриэль Солис"}, {"img": "bags-2", "cap": "Габриэль Солис: кадры и реплика"}, {"img": "bags-3", "cap": "Luci: Бри Ван де Камп"}, {"img": "bags-4", "cap": "Бри Ван де Камп: кадры и реплика"}, {"img": "bags-5", "cap": "Buton: Линнет Скаво"}, {"img": "bags-6", "cap": "Линнет Скаво: кадры и реплика"}, {"img": "bags-7", "cap": "Flora: Сьюзен Майер"}, {"img": "bags-8", "cap": "Сьюзен Майер: кадры и реплика"}]}, "prompts": [{"label": "Промпт для Gemini: реплики героинь", "text": "На каждом фото героиня из \"Отчаянных домохозяйек\" демонстрирует свой выбор товаров из магазина. Этот выбор соответствует её характеру. Напиши, почему эта сумка подходит именно ей — и придумай реплику в её стиле"}]}, {"id": "stickers", "title": "Стикеры для Телеграма за 10 минут", "short": "Свой набор стикеров без рисования: один «стилевой якорь», серия в том же стиле и публикация через @Stickers", "cat": ["photo", "video"], "tools": ["SYNTX", "Nano Banana", "Telegram"], "cover": "bags-9", "hook": "Хотите свой набор стикеров для общения с клиентами, командой или подписчиками? Не нужно рисовать: достаточно ИИ и 10 минут времени.", "steps": ["Заходим в SYNTX → Дизайн → Nano Banana. Создаём базовое изображение в соотношении 1:1: это наш «стилевой якорь». Первый стикер задаёт стиль для всей серии.", "Загружаем это изображение обратно в Nano Banana как референс и пишем новый запрос с другой темой, но с просьбой сохранить стиль. ИИ повторяет цветовую палитру, текстуру бумаги и кисти, форму наклейки с белой рамкой, стиль шрифта и расположение текста.", "Повторяем второй шаг столько раз, сколько нужно стикеров. Готовим размер изображения и удаляем фон на сайте iloveimg.com.", "Готовые изображения загружаем в @Stickers, официальный бот Телеграма, и публикуем набор."], "note": "В видео показан весь процесс от А до Я: как подготовить файлы, настроить прозрачность и опубликовать набор за 3 минуты.", "links": [{"label": "Изменить размер на iloveimg.com", "url": "https://www.iloveimg.com/ru/resize-image"}], "viewer": {"kind": "stage", "items": [{"label": "Готовый набор", "imgs": [{"id": "bags-9"}]}, {"label": "Видео: весь процесс", "video": "st", "caption": "Весь процесс от начала до публикации набора: подготовка файлов, прозрачность, бот @Stickers."}, {"label": "Первый стикер", "imgs": [{"id": "st-1"}]}, {"label": "Серия в том же стиле", "imgs": [{"id": "st-2", "label": "Запрос: швейная машинка"}, {"id": "st-3", "label": "Запрос: выкройки"}]}]}, "prompts": [{"label": "Шаг 1: базовый стикер", "text": "Забавная иллюстрация в виде наклейки, девушка с тканью, текст «МНЕ НАДО», свежая палитра (шалфей, пыльно-розовый, лаванда), акварельная текстура, прозрачный фон"}, {"label": "Шаг 2: новый стикер в том же стиле", "text": "Сделай в таком же стиле новый стикер: швейная машинка и грустная пустая шпулька с рожицей. Текст: „Закончилась на самом интересном\""}]}, {"id": "video", "title": "Фэшн-видео по фото изделия", "short": "Одно изделие, четыре плана, один промпт с таймкодами: ролик в Seedance 2", "cat": ["video", "brand"], "tools": ["SYNTX", "Seedance 2"], "cover": "v1", "coverMedia": true, "hook": "Создавать сначала фото или сразу делать видео? Теперь всё гораздо проще.", "steps": ["Заходим в SYNTX и выбираем Видео → Seedance 2.", "Загружаем изделие. Лучше составить коллаж с видами спереди и сзади.", "Пишем промпт с таймкодами и вставляем @референса в тех местах, где описывается изделие."], "note": "Оба видео сделаны по одному промпту, но выглядят по-разному. Чтобы получить одну внешность и одну локацию, добавьте их в референсы запроса.", "viewer": {"kind": "video", "ref": "vref-1", "videos": ["v1", "v2"], "segs": [{"a": 0, "b": 3, "t": "0–3 с", "h": "Общий план", "d": "Танцует вниз по лестнице, куртка развевается. Камера идёт сзади и резко переходит вперёд."}, {"a": 3, "b": 6, "t": "3–6 с", "h": "Средний крупный план", "d": "Поёт, держит телефон как микрофон. Камера медленно обходит её вокруг."}, {"a": 6, "b": 9, "t": "6–9 с", "h": "Низкий угол", "d": "Поза у белой плиточной стены, руки в стороны. Камера драматично наклоняется вверх."}, {"a": 9, "b": 12, "t": "9–12 с", "h": "Боковой трекинг", "d": "Уходит, оглядываясь через плечо. Фон слегка размыт для эффекта движения."}]}, "prompts": [{"label": "Промпт для Seedance 2", "text": "Кинематографичное городское фэшн-видео, фотореалистичный стиль, 8K, яркие цвета, динамичная камера.\nМолодая женщина с длинными тёмными волнистыми волосами, в красной повязке на голове, золотых серьгах-кольцах, белых проводных наушниках, подключённых к смартфону, который она держит в одной руке. Она одета в oversize куртку [ТУТ ВСТАВЛЯЕМ @ РЕФЕРЕНСА] поверх белого клетчатого топа и шорт, белые носки выглядывают из высоких коричневых ковбойских сапог. Она энергично танцует на городском тротуаре рядом с современным зданием со стеклянными окнами и плиточными стенами, явно наслаждаясь музыкой, которая играет в её наушниках.\n[0-3 сек] Общий план: она танцует вниз по наружной лестнице, улыбается, кружится, куртка развевается. Камера следует за ней сзади, затем резко переходит спереди.\nПровод от наушников колышется вместе с её движениями.\n[3-6 сек] Средний крупный план: она страстно поёт под музыку, глаза закрыты, голова запрокинута назад, телефон держит как микрофон. Наушник виден в ухе, провод тянется вниз к телефону. Камера медленно обходит её вокруг.\n[6-9 сек] Низкий угол, полный рост: она принимает позу у белой плиточной стены, руки в стороны, ноги расставлены, уверенное выражение лица. Один наушник всё ещё на месте, провод слегка качается. Камера драматично наклоняется вверх.\n[9-12 сек] Боковой трекинг: она уверенно уходит, покачивая бёдрами, смотрит через плечо на камеру, всё ещё поёт под музыку. Фон слегка размыт для эффекта движения.\nПровод от наушников развевается позади неё.\nОсвещение: естественный дневной свет с мягкими тенями, тёплый оттенок «золотого часа». Стиль: трендовый, молодёжный, высокоэнергетичный, эстетика Instagram/TikTok, плавные переходы между кадрами, реалистичное движение ткани, волос и динамика провода от наушников."}]}, {"id": "breakdown", "title": "Разбор видео: киношная история с удержанием внешности", "short": "Карты персонажей в Nano Banana Pro и сцена погони в Seedance 2: герои выглядят одинаково во всех кадрах", "cat": ["video", "brand"], "tools": ["Nano Banana Pro", "Seedance 2"], "cover": "raz-1", "hook": "Киношная атмосферная история с полным удержанием внешности персонажей. Разбираем, как работать в Seedance 2 и сделать крутой результат, потратив минимум времени.", "steps": ["Создаём карту персонажа или нескольких. Заходим в Nano Banana Pro и отправляем промпт с описанием внешности, которую хотим видеть. Пример: девушка-русалочка.", "Заходим в «Видео» и выбираем нейросеть Seedance 2. Детально прописываем сцену: ракурсы съёмки и план кадра, чтобы сцена получилась разнообразной.", "Если в сцене участвует персонаж, добавляем к промпту изображение его карты и отмечаем его в тексте через @."], "note": "Чтобы сцена получилась разнообразной, пропишите ракурсы съёмки и план кадра. Персонажа нужно добавлять через @: приложите к промпту изображение готовой карты и отметьте его в тексте.", "closing": "Так Seedance 2 создаёт видео до 15 секунд с разными сценами, сильной режиссурой и очень эстетичной картинкой.", "links": [{"label": "Пример разбора видео", "url": "https://disk.yandex.ru/d/2PxcldsHXMVTxQ"}], "viewer": {"kind": "stage", "items": [{"label": "Обложка", "imgs": [{"id": "raz-1"}]}, {"label": "Карты персонажей", "caption": "Каждый персонаж собран в Nano Banana Pro как коллаж из нескольких ракурсов, и потом подключается к сцене через @.", "imgs": [{"id": "raz-2", "label": "Русалочка"}, {"id": "raz-3", "label": "Герой"}, {"id": "raz-4", "label": "Краб"}, {"id": "raz-5", "label": "Злодейка"}]}]}, "prompts": [{"label": "Шаг 1: карта персонажа", "text": "Сделай коллаж из 6 фото с разных ракурсов: девушка 18 лет с ярко красными пышными волнистыми волосами, большими зелеными глазами и пухлыми губами, фотореалистичная внешность, белый фон, без текста"}, {"label": "Шаг 2: сцена погони", "text": "Реалистичный ретро фильм Ночной портовый док. Проливной дождь. Темно синий Dodge Charger (в котором сидят @image @image @image ) мчится по узкому коридору между контейнерами. Сзади надвигается огромный чёрный внедорожник — он таранит контейнер, не сбавляя скорость, металл разлетается в стороны, сноп искр.\nКрупный план — @image за рулём внедорожника, съёмка снаружи через лобовое стекло. Огромная, массивная фигура заполняет кадр. Лицо искажено злобным торжеством — широкая хищная ухмылка, прищуренные глаза горят яростью. Капли дождя стекают по стеклу. Из-за её спины в окно уже тянутся щупальца.\nНизкий план у асфальта. Щупальце хлещет по мокрому асфальту рядом с колёсами Dodge — удар высекает сноп искр, лужа разлетается брызгами. Одновременно в верхней части кадра — паника внутри машины: @image скользит по приборной панели, врезается в болтающийся освежитель-ракушку и повисает на нём.\nКрупный план лица @image — она смотрит назад через заднее стекло. Ужас в глазах, волосы разметались. За стеклом видно: щупальце медленно обхватывает угол контейнера, @image в окне внедорожника смотрит прямо на неё с торжествующей ухмылкой.\nШирокий динамичный план снаружи, низкий угол. Щупальце швыряет контейнер поперёк дороги. Dodge уходит в жёсткий занос, контейнер с грохотом бьётся об асфальт в метре от машины — фонтан искр. Внедорожник не останавливается."}]}, {"id": "brandbook", "title": "Брендбук за один промпт", "short": "Одна инструкция для ИИ пишет три промпта: карта бренда, коллекция из шести образов и рекламный коллаж", "cat": ["brand", "video"], "tools": ["ChatGPT", "GPT Image 2"], "cover": "bb-2", "hook": "Создаём брендбук за 1 промпт. Я создала промпт-инструкцию для ИИ, благодаря которой нейросеть сама напишет 3 промпта.", "stepsLabel": "Три промпта на выходе", "steps": ["Для создания карты бренда: нейросеть подбирает палитру, продумывает логотип, упаковку, шрифты, аудиторию и ДНК бренда.", "Для коллекции одежды из 6 моделей: на основе ваших пожеланий и референсов ИИ придумывает новые изделия и подбирает цвета под палитру бренда.", "Для примера рекламной фотосессии: коллаж для рекламной кампании с продуманной концепцией и атмосферой."], "note": "Промпт и подробная инструкция по использованию лежат по ссылке ниже.", "links": [{"label": "Промпт и инструкция", "url": "https://maps-thank-ebq.craft.me/melon"}], "viewer": {"kind": "stage", "items": [{"label": "Рилс", "video": "bb", "caption": "Короткое видео о том, как из одной инструкции получается брендбук и рекламная кампания."}, {"label": "SYNTX: карта бренда", "imgs": [{"id": "bb-1"}]}, {"label": "SYNTX: коллекция", "imgs": [{"id": "bb-2"}]}, {"label": "SYNTX: кампания", "imgs": [{"id": "bb-3"}]}, {"label": "MELON: карта бренда", "imgs": [{"id": "bb-4"}]}, {"label": "MELON: коллекция", "imgs": [{"id": "bb-5"}]}, {"label": "MELON: кампания", "imgs": [{"id": "bb-6"}]}]}}, {"id": "light", "title": "Чит-лист по свету", "short": "Пять схем освещения, которые убирают «пластик» из нейрокадра", "cat": ["photo"], "tools": ["SYNTX", "Nano Banana"], "cover": "light-golden", "hook": "Свет — это 90% успеха фотографии. Часто нейросеть выдаёт «пластиковый» результат просто потому, что мы не объяснили ей, как осветить модель.", "steps": ["Заходим в SYNTX → Дизайн → Nano Banana.", "Добавляем ключевые слова нужной схемы в конец промпта.", "Или просим ИИ заменить освещение на уже готовом кадре."], "viewer": {"kind": "stage", "items": [{"label": "Окно", "imgs": [{"id": "light-window"}]}, {"label": "Вспышка", "imgs": [{"id": "light-flash"}]}, {"label": "Золотой час", "imgs": [{"id": "light-golden"}]}, {"label": "Игра теней", "imgs": [{"id": "light-gobo"}]}, {"label": "Кино-драма", "imgs": [{"id": "light-rembrandt"}]}]}, "prompts": [{"item": 0, "label": "Natural Window Light: естественный люкс", "note": "Свет из большого окна. Чистая живая картинка в стиле каталогов Zara и Massimo Dutti: кожа выглядит естественно, одежда дорого. Куда: универсальная база для любых лукбуков.", "text": "soft natural window light, daylight pouring into the room, bright and airy atmosphere, authentic skin texture"}, {"item": 1, "label": "Hard Flash: дерзкая вспышка", "note": "Жёсткий свет «в лоб» с резкими тенями на стене. Стиль папарацци, Balenciaga и Y2K. Куда: стритвир, молодёжные бренды, обувь, аксессуары.", "text": "direct camera flash, hard shadows on the wall behind, high contrast, trendy flash photography, sharp focus"}, {"item": 2, "label": "Golden Hour: золотой час", "note": "Магический свет перед закатом: тёплый, уютный, заливающий всё золотом. Куда: уличные съёмки, реклама купальников, бохо-стиль, романтика.", "text": "golden hour sunlight, warm glow, sun flare, backlighting, sunset atmosphere, dreamy light"}, {"item": 3, "label": "Gobo / Shadow Play: игра теней", "note": "Самый горячий тренд Pinterest. Свет проходит через жалюзи или листья и рисует на модели узоры. Куда: творческие портреты, реклама духов, эстетика «тихая роскошь».", "text": "dappled sunlight, shadows of palm leaves on face, window blind shadows, aesthetic lighting, high contrast shadows"}, {"item": 4, "label": "Rembrandt / Cinematic: кино-драма", "note": "Контрастный, таинственный свет, половина лица в тени. Выглядит очень объёмно и кинематографично. Куда: мужские портреты, вечерняя мода, обложки журналов.", "text": "dramatic side lighting, chiaroscuro, deep shadows, cinematic lighting, moody atmosphere, volumetric light"}]}, {"id": "tech", "title": "Технический эскиз изделия по фото", "short": "Из референса в чертёж для фабрики и презентационный эскиз для бренда", "cat": ["brand"], "tools": ["Nano Banana Pro"], "cover": "tech-3", "hook": "Создание технических эскизов по референсу — это не только про производство. Это ещё и мощный инструмент для бренда: клиенту, инвестору или партнёру можно показать не «как будет», а «как устроено».", "steps": ["Заходим в Nano Banana Pro и загружаем фото изделия.", "Выбираем один из двух подходов. Вариант A: технический чертёж. Для фабрики: швы, вытачки, конструкция, расположение деталей.", "Вариант B: презентационный эскиз. Для бренда: прозрачность и доверие, потому что видны детали нового изделия."], "closing": "ИИ — это не только креатив, но и полноценный помощник для решения сложных технических задач.", "viewer": {"kind": "stage", "items": [{"label": "Бельевой комплект", "imgs": [{"id": "tech-1", "label": "Референс"}, {"id": "tech-2", "label": "Вариант A: чертёж"}, {"id": "tech-3", "label": "Вариант B: презентация"}]}, {"label": "Тренч", "imgs": [{"id": "tech-4", "label": "Референс"}, {"id": "tech-5", "label": "Вариант A: чертёж"}, {"id": "tech-6", "label": "Вариант B: презентация"}]}]}, "prompts": [{"label": "Вариант A: технический чертёж", "text": "Сделай технический эскиз [ВАШЕГО ИЗДЕЛИЯ] с изображения, вид спереди. Изделие должно полностью соответствовать модели с референса: детализация материала, форма, дизайн, строчки, фурнитура и цвет. Без надписей и текста."}, {"label": "Вариант B: презентационный эскиз", "text": "Создай профессиональный технический эскиз изделия с изображения. В центре разместите 3D-рендер главного вида с реалистичными материалами, мягким студийным освещением и детализацией отделки, строчки Вокруг добавьте технические проекции изделия: вид спереди, сбоку, сзади. Укажи используемые материалы и варианты отделки подпиши эти элементы на русском языке.\nДобавьте цветовые палитры (образцы), фотореалистичные изображения изделия и легкие тени. Реалистичный 3D-рендер с элементами векторной графики, примените современный дизайн и максимальную детализацию — решение должно быть пригодно для промышленного использования"}]}, {"id": "brandshoots", "title": "Съёмки нижнего белья для брендов", "short": "Восемь каталожных сетов: одна модель и одно изделие в разных ракурсах и локациях", "cat": ["brand", "photo"], "tools": ["Nano Banana"], "cover": "brand-2", "note": "Каждый сет собран как лукбук из шести кадров: общий план, крупные детали, вид со спины, разные локации и свет. Так бренд видит изделие целиком, не заказывая съёмку.", "links": [{"label": "Пример урока по нижнему белью", "url": "https://disk.yandex.ru/i/KW2oX9boj-5MTw"}], "viewer": {"kind": "stage", "items": [{"label": "Луг", "imgs": [{"id": "brand-1"}]}, {"label": "Спальня", "imgs": [{"id": "brand-2"}]}, {"label": "Балкон", "imgs": [{"id": "brand-3"}]}, {"label": "Студия", "imgs": [{"id": "brand-4"}]}, {"label": "Красный сатин", "imgs": [{"id": "brand-5"}]}, {"label": "Голубая сетка", "imgs": [{"id": "brand-6"}]}, {"label": "Шоколадное кружево", "imgs": [{"id": "brand-7"}]}, {"label": "Красный свет", "imgs": [{"id": "brand-8"}]}]}}, {"id": "lingerie5", "title": "5 идей для демонстрации нижнего белья", "short": "Пять форматов съёмки: ретро-кампейн, съёмка на смартфон и подбор образа. Промпты на каждом слайде", "cat": ["brand", "photo"], "tools": ["Nano Banana"], "cover": "ideas-1", "hook": "Копируй промпты и повторяй тренды: такие фото цепляют и удерживают внимание зрителя.", "note": "Промпты записаны прямо на слайдах. Откройте слайд на весь экран, чтобы прочитать текст.", "links": [{"label": "Пример урока по нижнему белью", "url": "https://disk.yandex.ru/i/KW2oX9boj-5MTw"}], "viewer": {"kind": "carousel", "ratio": "4/5", "items": [{"img": "ideas-1", "cap": "5 идей для демонстрации нижнего белья"}, {"img": "ideas-2", "cap": "Копируй промпты и повторяй тренды"}, {"img": "ideas-3", "cap": "Идея 1: ретро-кампейн"}, {"img": "ideas-4", "cap": "Идея 2: ретро-кампейн"}, {"img": "ideas-5", "cap": "Идея 3: съёмка на смартфон"}, {"img": "ideas-6", "cap": "Идея 4: ретро-кампейн"}, {"img": "ideas-7", "cap": "Идея 5: подбор образа"}]}}, {"id": "retro", "title": "Ретро-нейрофотосессии", "short": "Пять необычных промптов: от ковров 70-х до Y2K со вспышкой", "cat": ["photo"], "tools": ["Nano Banana"], "cover": "retro-2", "hook": "Немного потянуло на ретро. Новая порция необычных промптов нейрофотосессий для себя или своей ИИ-модели.", "note": "Важно: я тестировала со своим портретом и со своей моделью. Не все промпты получаются идеально с первого раза: некоторые моменты, например направление камеры или нож как направляющая для стрелки, очень сложны для восприятия ИИ.", "viewer": {"kind": "stage", "items": [{"label": "Ковёр и джинсы", "imgs": [{"id": "retro-1"}]}, {"label": "Видеокамера и ТВ", "imgs": [{"id": "retro-2"}]}, {"label": "Ночная вспышка", "imgs": [{"id": "retro-3"}]}, {"label": "Стрелка по ножу", "imgs": [{"id": "retro-4"}]}, {"label": "Лайм-ковёр 70-х", "imgs": [{"id": "retro-5"}]}]}, "prompts": [{"item": 0, "label": "Промпт 1", "text": "Full body shot of a young woman sitting on a beige shag carpet, leaning back against mid-century modern wooden cabinets. She has long wavy hair with curtain bangs. She is wearing a white fitted t-shirt with a retro oval logo reading \"GIRL\", extremely baggy light-wash wide-leg jeans, and black chunky platform shoes. Her legs are extended towards the camera lens. 1990s Y2K fashion aesthetic, direct flash photography, film grain, Kodak Portra 400 look, warm indoor lighting, candid pose, high quality."}, {"item": 1, "label": "Промпт 2", "text": "Девушка сидит на полу, широко расставив ноги, и держит винтажную видеокамеру 90-х, камера перевернута и направлена прямо на лицо — как будто снимает себя для селфи. На ней черная кожаная куртка, белые носки и черные кеды Converse. Перед ней стоит ретро-телевизор черного цвета с ЭЛТ-экраном, подключенный к камере через AV-кабель. На экране телевизора — прямая трансляция: крупный план ее лица, выражающего подмигивание одним глазом. Минималистичный белый студийный фон.\nЭстетика 90-х, Y2K, прямая вспышка, зернистость пленки, высокий контраст, атмосфера автопортрета."}, {"item": 2, "label": "Промпт 3", "text": "Night street photography shot with direct flash. A person with wavy hair looking back over their shoulder at the camera. Wearing an oversized green button-up jacket, red cat-eye sunglasses, and carrying a colorful patterned bag with striped strap. Dark urban night background with city lights. 90s Y2K aesthetic, grainy film photography, high contrast flash photography, candid paparazzi style shot, edgy street style fashion, moody atmosphere, disposable camera aesthetic, vintage film look."}, {"item": 3, "label": "Промпт 4", "text": "Close-up beauty shot of a person applying winged eyeliner using a black tactical folding knife as a makeup stencil guide. One hand holds the knife blade flat against the outer corner of the eye, while the other hand draws a precise black eyeliner wing along the edge of the knife blade. The knife is positioned horizontally as a ruler for perfect eyeliner application.\nMessy hair with bangs, black sleeveless top. Golden hour sunlight streaming through window, warm tones, vintage floral wallpaper background. Film photography aesthetic, 35mm grain, candid beauty hack moment, natural lighting, intimate indoor setting."}, {"item": 4, "label": "Промпт 5", "text": "Top-down view of a woman lying on a bright lime green shag carpet in a relaxed pose. She's wearing a lavender quilted romper with gold buttons and a collar. Her head rests on a hot pink pillow. In one hand she holds a green beverage can. Surrounding her are retro props: a yellow rotary dial telephone, a disco ball, vintage magazines including one with \"California\" title and a yellow classic car. 1970s retro aesthetic, vibrant saturated colors, groovy vintage vibe, playful composition, warm indoor lighting, nostalgic 70s interior, colorful and fun atmosphere, film photography style."}]}, {"id": "look", "title": "Лукбук-коллаж в стиле Pinterest", "short": "Коллаж из ваших вещей одним промптом, а затем образ на модели", "cat": ["photo", "brand"], "tools": ["Nano Banana"], "cover": "look-1", "hook": "Создаём лукбук-коллаж в стиле Pinterest без монтажа и описаний.", "steps": ["Загружаем в Nano Banana свои референсы: одежду, обувь, аксессуары.", "Копируем промпт и заменяем «кофта», «джинсы», «обувь», «сумка» на свои предметы: «с референса 1», «с референса 2» и так далее.", "Следующий уровень: загружаем готовый коллаж как единый референс и просим создать модель в образе."], "closing": "ИИ берёт образ целиком: одежду, обувь, аксессуары, палитру и атмосферу фона, и помещает его на модель в естественной локации, как будто она только что вышла из лукбука.", "viewer": {"kind": "stage", "items": [{"label": "Образ 1", "imgs": [{"id": "look-1", "label": "Лукбук-коллаж"}, {"id": "look-3", "label": "Образ на модели"}]}, {"label": "Образ 2", "imgs": [{"id": "look-2", "label": "Лукбук-коллаж"}, {"id": "look-4", "label": "Образ на модели"}]}]}, "prompts": [{"label": "Промпт 1: лукбук-коллаж", "text": "Создай элегантный и минималистичный графический коллаж в формате лукбука, передающий эстетику “тихой роскоши” (quiet luxury) и натуральных текстур. Коллаж должен гармонично сочетать в себе два типа изображений: Чистые студийные фото предметов (PNG-стиль):\n[НАЗВАНИЕ ПРЕДМЕТА 1] — с референса 1 [НАЗВАНИЕ ПРЕДМЕТА 2] — с референса 2 [НАЗВАНИЕ ПРЕДМЕТА 3] — с референса 3 [НАЗВАНИЕ ПРЕДМЕТА 4] — с референса 4 Палитру подбери по оттенкам одежды и аксессуаров, преобразуй в 4 круглых цветовых кружка.\nДобавь в композицию небольшие атмосферные вставки: фрагменты архитектуры, текстуры натуральных материалов — но подбирая их автоматически под стиль и цвета основных предметов.\nКомпозиция: асимметричная, на светло-бежевом фоне, элементы слегка перекрывают друг друга. Добавь надпись [НАДПИСЬ] шрифтом serif"}, {"label": "Промпт 2: образ на модели", "text": "Создай модель в образе с референса"}]}, {"id": "pattern", "title": "Паттерн на целую коллекцию", "short": "Один принт, один промпт: комплект на технических эскизах для бренда или фабрики", "cat": ["brand"], "tools": ["SYNTX", "Nano Banana"], "cover": "pat-3", "hook": "Вы создали красивый принт и хотите сразу увидеть, как он будет выглядеть на разных элементах одежды?", "steps": ["Заходим в SYNTX → Дизайн → Nano Banana. Загружаем референс паттерна: цветы, абстракция, геометрия — что угодно.", "Пишем промпт.", "Адаптируем: меняем «топ + шорты + кимоно» на «платье + жакет + юбка», фон на белый, графитовый или текстурированный, стиль на «fashion скетч», «акварель» или «векторный скетч»."], "closing": "Результат как в портфолио дизайнера: готовые эскизы для презентации бренду, фабрике или инвестору.", "viewer": {"kind": "stage", "items": [{"label": "Цветы", "imgs": [{"id": "pat-1", "label": "Паттерн"}, {"id": "pat-3", "label": "Комплект"}, {"id": "pat-5", "label": "Вариация"}]}, {"label": "Тюльпаны", "imgs": [{"id": "pat-2", "label": "Паттерн"}, {"id": "pat-4", "label": "Комплект"}, {"id": "pat-6", "label": "Вариация"}]}]}, "prompts": [{"label": "Промпт для комплекта", "text": "Плоская иллюстрация летнего комплекта нижнего белья: топ, шорты и кимоно, в стиле technical drawing, акварельная эстетика. Композиция на светло-бежевом фоне. Узор на изделиях — использовать загруженный референс паттерна, мелкомасштабный, равномерно распределённый. Профессиональная фэшн-иллюстрация, минималистичный фон, стиль презентации дизайна продукта"}]}, {"id": "angles", "title": "9 ракурсов за 1 минуту", "short": "ИИ сам собирает фотосессию из одного кадра: сетка 3×3 с разными углами", "cat": ["photo", "brand"], "tools": ["SYNTX", "Nano Banana"], "cover": "col-4", "hook": "Ребята, такого вы точно не ожидали! Самый быстрый способ не ломать голову над ракурсами: доверить подборку ИИ и получить сразу 9 разных кадров за минуту.", "steps": ["Заходим в SYNTX → Дизайн → Nano Banana.", "Загружаем референс: готовое фото, где на модели ваше изделие в нужной локации (полный рост, хороший свет).", "Пишем промпт, жмём «генерировать» и через минуту получаем целую фотосессию в одном кадре: крупные планы, профиль, снизу, сверху, спина, детали."], "closing": "Идеально, чтобы быстро собрать мудборд, показать клиенту варианты композиции и найти самый выигрышный ракурс без десятков генераций.", "viewer": {"kind": "stage", "items": [{"label": "Сетка 3×3", "imgs": [{"id": "col-4"}]}, {"label": "Кадры из сетки", "imgs": [{"id": "col-1"}, {"id": "col-2"}, {"id": "col-3"}]}, {"label": "Из прошлого поста", "caption": "В прошлом посте: как сохранить ИИ-модель для стабильной фотосессии.", "imgs": [{"id": "col-6", "label": "Запрос в Nano Banana Pro"}, {"id": "col-5", "label": "Результат"}, {"id": "col-7", "label": "Та же модель, полный рост"}]}]}, "prompts": [{"label": "Промпт для сетки 3×3", "text": "Сделай коллаж из 9 фото по исходному изображению, сетка 3×3 с разными ракурсами и углами съёмки"}, {"label": "Запрос из прошлого поста", "text": "Создай аналогичное фото с детальной прорисовкой внешности, взгляд в камеру"}]}, {"id": "birthday", "title": "Нейрофотосессия ко дню рождения", "short": "Четыре готовых сюжета: от боксёрских перчаток до торта со свечой", "cat": ["photo"], "tools": ["SYNTX", "Nano Banana"], "cover": "bday-1", "hook": "Есть тут именинники? Ловите подборку промптов, чтобы сделать себе нейрофотосессию ко дню рождения.", "steps": ["Заходим в SYNTX → Дизайн → Nano Banana.", "Загружаем своё фото, на котором видно лицо.", "Вставляем промпт на выбор."], "viewer": {"kind": "stage", "items": [{"label": "Перчатки", "imgs": [{"id": "bday-1"}]}, {"label": "Пончик «30»", "imgs": [{"id": "bday-2"}]}, {"label": "Зеркало", "imgs": [{"id": "bday-3"}]}, {"label": "Торт", "imgs": [{"id": "bday-4"}]}]}, "prompts": [{"item": 0, "label": "Боксёрские перчатки", "text": "Портрет девушки с мокрыми волосами, собранными назад, влажной кожей с каплями воды, с чёрными боксёрскими перчатками у щёк. На носу — чёрный пластырь с белой надписью: «мне сегодня 30». Студийное освещение, белый фон, модная эстетика, гиперреализм, как в Vogue, фокус на лице."}, {"item": 1, "label": "Фотосет с пончиком", "text": "Четырёхчастный фотосет на белом фоне, студийное освещение, высокая детализация:\n1) Женщина в чёрном приталенном пиджаке с V-вырезом, волосы собраны в небрежный высокий пучок с локонами по лицу. В правой руке — розовый пончик с ярко-розовой глазурью и разноцветной посыпкой (сахарные шарики и полоски).\nЗолотые металлические цифры «3» и «0» (объёмные, с глянцевым отблеском)\nдержатся на зубочистках, вставленных в пончик. Она прижимает пончик к правому глазу, слегкащурившись, губы приоткрыты в улыбке. 2) Та же поза, но пончик держится обеими руками перед лицом, цифры «30» расположены сверху — она улыбается, показывая зубы, язык чуть выглядывает, как будто собирается откусить. 3) Размытый план: лицо не в фокусе, акцент на руках и пончике — пальцы с белым матовым лаком держат пончик, цифры «30» видны чётко, фон — чисто белый, без теней. 4) Прямой взгляд в камеру: пончик держится двумя руками перед губами, цифры «30» закрывают рот, глаза широко открыты, выражение — игривое и уверенно-весёлое. На ушах — крупные золотые кольца-кольца с фактурой, на запястье — тонкий серебряный браслет. Освещение — мягкое, равномерное, без теней на лице, подчёркивает блеск глазури, металла и кожи. Стиль — современная fashion-фотография для Instagram:\nчёткая композиция, минимализм, акцент на жестах и текстурах."}, {"item": 2, "label": "Селфи в зеркале", "text": "Селфи в ванной: женщина стоит перед большим зеркалом с подсветкой по краям. На зеркале красной помадой написано «birthday girl 30!» — курсивным рукописным шрифтом, с двумя маленькими сердечками над словом «girl». Она держит в руке открытый тюбик красной помады, как будто только что написала надпись. На ней — чёрное бархатное корсетное платье с перьями на лифе и полупрозрачные черные перчатки с точечным узором. Волосы волнистые, слегка растрёпанные. Фон — светлая плитка в ванной (серо-белая квадратная плитка), виден хромированный смеситель у раковины внизу. Освещение — яркое, равномерное, как от LED-подсветки зеркала, без резких теней. Стиль — современная социальная фотография, Instagram-эстетика, чёткая детализация, реалистичная текстура кожи и ткани."}, {"item": 3, "label": "Торт со свечой", "text": "Женщина лежит на боку на белом кружевном покрывале, голова приподнята, взгляд вверх и влево — с лёгкой усмешкой и игривым выражением. Её правая рука поднята к лицу: указательный палец прижат к губам, кончик пальца слегка облизан (как после дегустации крема с торта). На ногтях — матовый лак. Перед ней — мини-торт в белом картонном контейнере с прозрачной крышкой, покрытый белым кремом, на котором стоят две серебряные объёмные цифры «30» и одна зажжённая свеча между ними.\nВолосы в прядях — золотые заколки в форме капель и жемчужин. На ней — белый кружевной топ с тонкими бретелями. Слева на заднем плане — размытый крупный букет гортензий: розовые и белые, плотные, как облако. Освещение — мягкое, рассеянное, с лёгким бликом на металле цифр и коже, без резких теней. Угол съёмки\n— чуть сверху, средний план, фон размыт, фокус на лице и торте. Стиль — реалистичная современная birthday-фотография, как в Instagram у Rayssa Sousa"}]}, {"id": "instagram", "title": "Instagram с нуля через ИИ", "short": "Шапка профиля, аватарка и сценарий первого рилса: гайд из девяти слайдов и три промпта", "cat": ["strategy"], "tools": ["ChatPlace", "Virale", "Edits"], "cover": "insta-1", "hook": "Нашла сервис для создания и автоматизации контента для соцсетей и хочу показать, как он работает. Это ChatPlace.", "steps": ["Переключаем Instagram на профессиональный аккаунт: Настройки → Тип аккаунта и инструменты → Профессиональный аккаунт.", "Регистрируемся в ChatPlace и подключаем Instagram. На сайте можно оформить бесплатный период на 2 недели.", "Копируем промпт целиком, вставляем в чат и отвечаем на вопросы ИИ.", "Снимаем рилс в Edits (бесплатное приложение Instagram) и публикуем."], "closing": "Первый рилс не обязан быть идеальным. Он обязан выйти.", "viewer": {"kind": "carousel", "ratio": "16/9", "items": [{"img": "insta-1", "cap": "Обложка"}, {"img": "insta-2", "cap": "Сервис"}, {"img": "insta-3", "cap": "Три шага подключения"}, {"img": "insta-4", "cap": "Маршрут"}, {"img": "insta-5", "cap": "Промпт 1: шапка", "item": 0}, {"img": "insta-6", "cap": "Промпт 2: аватарка", "item": 1}, {"img": "insta-7", "cap": "Промпт 3: хуки и сценарий", "item": 2}, {"img": "insta-8", "cap": "Первый рилс в Edits"}]}, "prompts": [{"item": 4, "label": "Промпт 1: шапка профиля", "text": "Ты — специалист по оформлению Instagram-профилей. Помоги мне написать шапку профиля, после которой человек, пришедший из рилса, за три секунды поймёт, что профиль для него, и захочет подписаться.\nСначала расспроси меня. Задавай вопросы по одному и жди моего ответа на каждый:\n1. Как меня зовут?\n2. Чем я занимаюсь, какая у меня сфера (например, маникюр, фитнес, психология)?\n3. Кто мой читатель: возраст, жизненная ситуация, что его тревожит?\n4. Какую пользу человек получает от моего контента: чему научится, что изменится?\n5. Чем я отличаюсь: опыт, путь, необычный подход? Только правда.\n6. Куда будет вести ссылка в шапке: гайд, продукт, телеграм, запись или пока никуда?\nКогда получишь все ответы, сделай:\n1. Предложи 3 варианта поля «Имя» до 64 символов: имя плюс ключевое слово моей сферы, по которому меня будут искать.\n2. Напиши 5 вариантов био до 150 символов, по 3–4 строки: кто я и чем помогаю → для кого и что внутри профиля → чем заслуживаю доверие → куда идти по ссылке.\n3. Каждый вариант — в своём тоне: экспертный, личный (через мою историю), через боль читателя, через интригу, коротко и дерзко.\n4. К каждому варианту добавь одну строку: кому он подойдёт.\n5. В конце выбери лучший вариант и объясни выбор.\nПравила:\n— живой разговорный язык, без штампов вроде «раскрываю потенциал»;\n— без обещаний дохода, гарантий и связок «результат + срок»;\n— без условий вроде «подпишись, чтобы получить»;\n— ничего не выдумывай: используй только факты из моих ответов;\n— эмодзи — не больше 1–2 на вариант и только по делу.\nНачинай с первого вопроса."}, {"item": 5, "label": "Промпт 2: аватарка в стиле фотосессии", "text": "К этому сообщению прикреплены два изображения.\nФото 1 — референс: фотосессия, чей стиль я хочу повторить.\nФото 2 — моё селфи, это моё лицо.\nПрежде чем создавать кадр, задай мне два вопроса, по одному, и дождись ответов:\n1. Одежду взять с референса или оставить мою с селфи?\n2. Причёску и цвет волос взять с селфи или с референса?\nЕсли ты не можешь задавать вопросы, оставь одежду и причёску с селфи.\nЗатем создай фотореалистичный кадр так, будто на этой фотосессии снимали меня, а не человека с референса.\nИз фото 1 возьми: позу, ракурс и кадрирование; свет (направление, мягкость, тени, температуру); фон и место съёмки; цветокоррекцию и настроение.\nИз фото 2 возьми лицо целиком: форму, глаза и их цвет, брови, нос, губы, тон кожи, родинки и особенности.\nВажно:\n— лицо должно остаться узнаваемо моим: не усредняй его и не смешивай с лицом с референса;\n— живая кожа с текстурой, без «пластика» и тяжёлой ретуши;\n— реалистичные пропорции, руки и пальцы без искажений;\n— без текста, логотипов и водяных знаков;\n— формат 1:1, лицо крупно по центру: кадр обрежется в круг для аватарки."}, {"item": 6, "label": "Промпт 3: хуки и сценарий рилса", "text": "Ты — сценарист коротких вирусных видео. Пиши разговорным языком, коротко и без воды.\nМоя сфера: [чем занимаюсь]\nМоя аудитория: [кто смотрит и что его волнует]\nИдея ролика: [мысль, история, совет или ссылка на чужой рилс, который хочу адаптировать]\nМои факты: [реальные цифры, события, опыт — только правда]\nШаг 1. Хуки.\nПридумай 10 вариантов — по два на каждый приём: страх потери, провокация, любопытство, цифра, узнавание. Каждый хук — не дольше 3 секунд вслух, 1–2 короткие фразы. Подпиши, какой приём использован. Выдели три сильнейших и объясни почему.\nШаг 2. Сценарий.\nПо лучшему хуку напиши сценарий на 45–90 секунд с моей идеей и такой структурой:\nхук → контекст → мостик → основная часть → финал → призыв к действию. Разметь по секундам, короткими фразами: я буду читать его в камеру.\nШаг 3. Дополнения.\n— Текст на экран: 3–6 слов, дополняет голос, а не повторяет его.\n— Подпись к рилсу: 2–3 предложения."}]}, {"id": "trends", "title": "Как находить тренды с помощью ChatGPT", "short": "Одна инструкция превращает ChatGPT в ассистента по поиску идей для контента", "cat": ["strategy"], "tools": ["ChatGPT"], "cover": "trend-1", "hook": "Больше не нужно каждый день ломать голову над тем, что опубликовать. Вместо бесконечного скроллинга Pinterest, Reels и Shorts у вас есть AI-помощник, который находит референсы и придумывает, как адаптировать их под вашу нишу.", "steps": ["Копируем инструкцию ниже.", "Отправляем её в новый чат ChatGPT.", "Отвечаем на вопросы о своём проекте.", "Получаем подборку идей и выбираем ту, которую хотим реализовать."], "note": "ChatGPT не всегда может открыть каждую публикацию в соцсетях, поэтому проверяйте ссылки и сами референсы. Если источник недоступен, попросите подобрать альтернативный.", "closing": "Наша цель — не копировать чужой контент, а находить интересные механики и превращать их в собственные идеи.", "viewer": {"kind": "carousel", "ratio": "16/9", "items": [{"img": "trend-1", "cap": "Обложка поста"}]}, "prompts": [{"label": "Инструкция для ChatGPT", "text": "Ты - мой AI-ассистент по поиску трендов и созданию контента для социальных сетей.\nТвоя задача - находить интересные и актуальные идеи, которые уже используются в интернете, и помогать мне адаптировать их под мой проект.\nЭТАП 1. Узнай обо мне Сначала задай мне вопросы по одному:\nЧем я занимаюсь и какой продукт или услугу предлагаю?\nКто моя целевая аудитория?\nДля каких площадок я создаю контент?\nКакова моя главная цель: охваты, подписчики, продажи, узнаваемость или привлечение клиентов?\nКакие форматы мне нужны: Reels, Shorts, UGC, фотографии, карусели или рекламные креативы?\nПосле моих ответов переходи к поиску.\nЭТАП 2. Найди актуальные референсы Используй поиск в интернете, чтобы найти конкретные публикации, видео и визуальные идеи, которые можно адаптировать под мой проект.\nИщи:\n- необычные способы демонстрации продуктов;\n- трендовые форматы коротких видео;\n- интересные рекламные концепции;\n- идеи для экспертного и продающего контента;\n- креативные визуальные приёмы;\n- решения, которые можно повторить с помощью нейросетей.\nСтарайся находить первоисточники и свежие публикации. Не выдавай старые идеи за новые тренды. Не придумывай ссылки и не утверждай, что идея популярна, если это не подтверждено доступными данными.\nЭТАП 3. Подготовь 5 идей Для каждой идеи предоставь:\nНазвание и суть - что предлагается сделать.\nРеференс - прямая ссылка на конкретную публикацию или видео.\nЧто в ней интересного - какой приём привлекает внимание.\nКак адаптировать - вариант для моего проекта без копирования чужого контента.\nКак реализовать с ИИ - какие инструменты использовать и что сделать.\nГотовый сценарий - последовательность кадров или действий.\nПромпт - готовый текст для генерации, если он необходим.\nЦель публикации - охваты, вовлечение, продажи или привлечение подписчиков.\nОтбирай идеи, которые можно реализовать самостоятельно, без большой команды и дорогого производства.\nНе предлагай пять вариантов одной и той же идеи. Лучше покажи разные подходы.\nЕсли не можешь найти достаточно проверенных примеров, сообщи об этом честно.\nЭТАП 4. Перейди к реализации После подборки предложи мне выбрать одну идею.\nКогда я её выберу, подготовь подробную инструкцию по реализации: от необходимых исходных материалов до готового контента.\nЕсли используются нейросети, напиши конкретные промпты и объясни, в каком порядке их применять.\nНе переходи к следующему этапу, пока мы не закончили текущий.\nНачни с первого вопроса обо мне и моём проекте."}]}], "stats": {"posts": 16, "creatives": 84, "videos": 4}, "dims": {"light-flash": [418, 560], "retro-4": [560, 420], "col-1": [418, 560], "insta-7": [560, 315], "raz-3": [560, 312], "retro-1": [560, 420], "brk-1": [560, 312], "bb-1": [560, 373], "ideas-1": [451, 560], "tech-6": [418, 560], "bags-7": [396, 560], "bb-3": [560, 373], "pat-4": [418, 560], "lg5-6": [451, 560], "brand-5": [560, 560], "col-5": [409, 560], "raz-2": [560, 312], "col-4": [418, 560], "brk-2": [560, 312], "bph-4": [560, 560], "raz-4": [560, 312], "col-2": [418, 560], "retro-5": [560, 420], "look-4": [418, 560], "vref-1": [560, 303], "ideas-4": [451, 560], "brand-3": [560, 560], "brk-5": [560, 312], "insta-4": [560, 315], "raz-1": [560, 312], "bph-8": [560, 560], "st-2": [560, 515], "bph-6": [560, 560], "col-3": [418, 560], "bb-2": [560, 373], "light-rembrandt": [418, 560], "ideas-2": [451, 560], "bday-2": [418, 560], "st-3": [560, 410], "lg5-4": [451, 560], "bags-1": [396, 560], "insta-8": [560, 315], "brand-2": [560, 560], "insta-6": [560, 315], "bph-7": [560, 560], "lg5-7": [451, 560], "me-ai": [420, 560], "ideas-3": [451, 560], "col-7": [409, 560], "light-gobo": [418, 560], "bb-6": [560, 373], "retro-2": [560, 420], "ideas-5": [451, 560], "look-3": [312, 560], "bday-3": [418, 560], "brk-3": [560, 312], "st-1": [560, 560], "bags-4": [396, 560], "bday-1": [418, 560], "light-window": [418, 560], "bags-9": [560, 469], "tech-2": [418, 560], "pat-5": [418, 560], "light-golden": [418, 560], "lg5-5": [451, 560], "bph-2": [560, 560], "bph-5": [560, 560], "bb-5": [560, 373], "lg5-2": [451, 560], "lg5-1": [451, 560], "insta-3": [560, 315], "brand-1": [373, 560], "pat-1": [560, 560], "tech-5": [418, 560], "bags-6": [396, 560], "pat-6": [418, 560], "bph-1": [373, 560], "tech-3": [418, 560], "bb-4": [560, 373], "ideas-6": [451, 560], "bags-3": [396, 560], "look-1": [418, 560], "insta-2": [560, 315], "pat-3": [418, 560], "brand-7": [560, 560], "brk-4": [560, 312], "bags-8": [396, 560], "bday-4": [418, 560], "look-2": [418, 560], "ideas-7": [451, 560], "pat-2": [560, 560], "brand-8": [560, 560], "brand-6": [560, 560], "lg5-3": [451, 560], "retro-3": [560, 420], "bags-5": [396, 560], "trend-1": [560, 312], "col-6": [560, 491], "tech-1": [312, 560], "bags-2": [396, 560], "tech-4": [312, 560], "bph-3": [560, 560], "brand-4": [560, 560], "insta-5": [560, 315], "insta-1": [560, 315], "raz-5": [560, 312]}};
+const CASES=DATA.cases,BY=Object.fromEntries(CASES.map(c=>[c.id,c])),DIMS=DATA.dims;
+const CATS=[['all','Все'],['photo','Фото'],['video','Видео'],['brand','Для брендов'],['strategy','Контент и стратегия']];
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const IMGDIR={"app": "img1", "bags-1": "img1", "bags-2": "img1", "bags-3": "img1", "bags-4": "img1", "bags-5": "img1", "bags-6": "img1", "bags-7": "img1", "bags-8": "img1", "bags-9": "img1", "bb-1": "img1", "bb-2": "img1", "bb-3": "img1", "bb-4": "img1", "bb-5": "img1", "bb-6": "img1", "bday-1": "img1", "bday-2": "img1", "bday-3": "img1", "bday-4": "img1", "bph-1": "img1", "bph-2": "img1", "bph-3": "img1", "bph-4": "img1", "bph-5": "img1", "bph-6": "img1", "bph-7": "img1", "bph-8": "img1", "brand-1": "img1", "brand-2": "img1", "brand-3": "img1", "brand-4": "img1", "brand-5": "img1", "brand-6": "img1", "brand-7": "img1", "brand-8": "img1", "brk-1": "img2", "brk-2": "img2", "brk-3": "img2", "brk-4": "img2", "brk-5": "img2", "col-1": "img2", "col-2": "img2", "col-3": "img2", "col-4": "img2", "col-5": "img2", "col-6": "img2", "col-7": "img2", "ideas-1": "img2", "ideas-2": "img2", "ideas-3": "img2", "ideas-4": "img2", "ideas-5": "img2", "ideas-6": "img2", "ideas-7": "img2", "insta-1": "img2", "insta-2": "img2", "insta-3": "img2", "insta-4": "img2", "insta-5": "img2", "insta-6": "img2", "insta-7": "img2", "insta-8": "img2", "lg5-1": "img2", "lg5-2": "img2", "lg5-3": "img2", "lg5-4": "img2", "lg5-5": "img2", "lg5-6": "img2", "lg5-7": "img2", "light-flash": "img2", "light-gobo": "img2", "light-golden": "img3", "light-rembrandt": "img3", "light-window": "img3", "look-1": "img3", "look-2": "img3", "look-3": "img3", "look-4": "img3", "me-ai": "img3", "pat-1": "img3", "pat-2": "img3", "pat-3": "img3", "pat-4": "img3", "pat-5": "img3", "pat-6": "img3", "raz-1": "img3", "raz-2": "img3", "raz-3": "img3", "raz-4": "img3", "raz-5": "img3", "retro-1": "img3", "retro-2": "img3", "retro-3": "img3", "retro-4": "img3", "retro-5": "img3", "st-1": "img3", "st-2": "img3", "st-3": "img3", "tech-1": "img3", "tech-2": "img3", "tech-3": "img3", "tech-4": "img3", "tech-5": "img3", "tech-6": "img3", "trend-1": "img3", "vref-1": "img3"};const src=id=>`${IMGDIR[id]}/${id}.webp`, thumb=id=>`${IMGDIR[id]}/${id}-t.webp`;
+const pad=n=>String(n).padStart(2,'0');
+const ARR_L='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',ARR_R='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+let state={filter:'all',open:null,internal:false,api:null,opener:null};
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* theme */
+(function(){const t=store.get('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;
+  $('#theme').addEventListener('click',()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme=dark?'light':'dark';store.set('theme',r.dataset.theme)})})();
+
+/* toast + copy */
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,1800)}
+async function copyText(text,btn,pre){
+  try{await navigator.clipboard.writeText(text);flash(btn);toast('Скопировано')}
+  catch(e){const el=pre||btn.closest('details')?.querySelector('pre');if(el){const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Выделено: нажмите Копировать в меню')}}
+}
+function flash(b){if(!b)return;const o=b.textContent;b.classList.add('ok');b.textContent='Готово';setTimeout(()=>{b.classList.remove('ok');b.textContent=o},1400)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-copytext]');if(b)copyText(b.dataset.copytext,b,b.closest('.cline').querySelector('.val'))});
+
+/* hero */
+(function(){
+  const s=DATA.stats;
+  $('#stats').innerHTML=`<span><b>${s.posts}</b>постов</span><span><b>${s.creatives}</b>креативов</span><span><b>${s.videos}</b>видео</span>`;
+  const SK=['Photoshop','Claude','ChatGPT','Blender','Illustrator','Grok','CapCut'],seen=new Set(SK.map(x=>x.toLowerCase()));
+  const tools=[...SK,...new Set(CASES.flatMap(c=>c.tools))].filter((x,i,a)=>i<SK.length||!seen.has(x.toLowerCase()));
+  $('#tools').innerHTML=tools.map(t=>`<span class="chip">${esc(t)}</span>`).join('');
+  const m=[['bags-1','bags'],['light-gobo','light'],['tech-3','tech'],['retro-2','retro'],['pat-3','pattern'],['look-3','look']];
+  const col=(a)=>`<div class="col">${a.map(([i,c])=>{const d=DIMS[i];return `<button type="button" data-open="${c}" aria-label="${esc(BY[c].title)}"><img src="${thumb(i)}" alt="" width="${d[0]}" height="${d[1]}" decoding="async"></button>`}).join('')}</div>`;
+  $('#mosaic').innerHTML=col([m[0],m[4]])+col([m[1],m[5]]);
+})();
+
+/* grid */
+function renderFilters(){
+  $('#filters').innerHTML=CATS.map(([k,l])=>{const n=k==='all'?CASES.length:CASES.filter(c=>c.cat.includes(k)).length;
+    return `<button type="button" data-f="${k}" aria-pressed="${state.filter===k}">${l}<span>${n}</span></button>`}).join('');
+}
+function renderGrid(){
+  $('#grid').innerHTML=CASES.map((c,i)=>{
+    const cov=c.coverMedia?`media/${c.cover}.jpg`:thumb(c.cover);const d=c.coverMedia?[540,960]:DIMS[c.cover];
+    const show=state.filter==='all'||c.cat.includes(state.filter);
+    return `<button type="button" class="card${show?'':' hide'}" data-open="${c.id}"><div class="pic" style="aspect-ratio:${d[0]}/${d[1]}"><img src="${cov}" alt="" loading="lazy" decoding="async"><span class="num">${pad(i+1)}</span>${c.viewer.kind==='video'?'<span class="play">видео</span>':''}</div><h3>${esc(c.title)}</h3><p>${esc(c.short)}</p><div class="tl">${c.tools.map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</div></button>`}).join('');
+}
+$('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;state.filter=b.dataset.f;renderFilters();renderGrid()});
+
+/* formula */
+(function(){
+  const F=[['Крючок','Первая строка обещает результат или задаёт вопрос читателю.','Есть тут именинники?','birthday'],
+   ['Маршрут','Показываю путь по интерфейсу: куда зайти, что загрузить, что нажать.','Заходим в SYNTX → Дизайн → Nano Banana','angles'],
+   ['Промпт','Готовый текст, который копируется целиком. Свои предметы подставляются в [квадратные скобки].','[НАЗВАНИЕ ПРЕДМЕТА 1] — с референса 1','look'],
+   ['Честный результат','Показываю, что получилось, и предупреждаю, что с первого раза выходит не всё.','Не все промпты получаются идеально с первого раза','retro']];
+  $('#formulaGrid').innerHTML=F.map(([h,p,q,id],i)=>`<button class="step" type="button" data-open="${id}"><span class="n">${pad(i+1)} / 04</span><h3>${h}</h3><p>${p}</p><q>${esc(q)}</q><span class="go">Пример: ${esc(BY[id].title)} →</span></button>`).join('');
+})();
+
+/* open / close / routing */
+document.addEventListener('click',e=>{const o=e.target.closest('[data-open]');if(o){state.opener=o;openCase(o.dataset.open,true)}});
+function openCase(id,push){
+  if(!BY[id])return;
+  if(state.open!==id){
+    const wasOpen=!!state.open;
+    state.open=id;renderReader(BY[id]);
+    if(push){const h='#post-'+id;if(location.hash!==h){if(wasOpen)location.replace(h);else{location.hash=h;state.internal=true}}}
+  }
+  const r=$('#reader');r.hidden=false;r.scrollTop=0;document.body.classList.add('lock');$('#rBack').focus({preventScroll:true});
+}
+function closeReader(){
+  if(!state.open)return;
+  if(state.api&&state.api.stop)state.api.stop();
+  state.open=null;state.api=null;document.title='Портфолио neiromelon';$('#reader').hidden=true;document.body.classList.remove('lock');$('#rView').innerHTML='';
+  if(state.opener&&document.contains(state.opener))state.opener.focus({preventScroll:true});
+}
+function requestClose(){
+  if(!state.open)return;
+  closeReader();
+  if(state.internal){state.internal=false;history.back()}else if(/^#post-/.test(location.hash)){location.hash='#works'}
+}
+$('#rBack').addEventListener('click',requestClose);
+function route(){const m=location.hash.match(/^#post-([a-z0-9-]+)$/);if(m&&BY[m[1]])openCase(m[1],false);else if(state.open)closeReader()}
+addEventListener('hashchange',route);
+
+/* reader render */
+function renderReader(c){
+  if(state.api&&state.api.stop)state.api.stop();
+  const i=CASES.indexOf(c);
+  $('#rCount').textContent=`Пост ${pad(i+1)} из ${pad(CASES.length)}`;
+  $('#rTags').innerHTML=c.tools.map(t=>`<span class="chip">${esc(t)}</span>`).join('');
+  $('#r-title').textContent=c.title;
+  document.title=c.title+' · neiromelon';
+  const view=$('#rView');view.innerHTML='';
+  const onSel=idx=>openPromptFor(idx);
+  state.api=buildViewer(c.viewer,view,onSel);
+  const prev=CASES[i-1],next=CASES[i+1];
+  const t=$('#rText');
+  t.innerHTML=
+   (c.hook?`<div><p class="lbl">Из поста</p><p class="hook">${esc(c.hook)}</p></div>`:'')+
+   (c.steps?`<div><p class="lbl">${esc(c.stepsLabel||'Как повторить')}</p><ol class="steps">${c.steps.map(s=>`<li><span>${esc(s)}</span></li>`).join('')}</ol></div>`:'')+
+   (c.note?`<p class="note">${esc(c.note)}</p>`:'')+
+   (c.links?`<div><p class="lbl">Материалы</p><div class="links">${c.links.map(l=>`<a class="btn primary sm" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</div></div>`:'')+
+   (c.prompts&&c.prompts.length?`<div><p class="lbl">${c.prompts.length>1?'Промпты':'Промпт'}</p><div id="prompts">${c.prompts.map((p,k)=>`<details class="prompt" data-k="${k}"><summary><span class="t">${esc(p.label)}</span><button class="copy" type="button" data-copy="${k}">Скопировать</button></summary><div class="pb">${p.note?`<p class="pn">${esc(p.note)}</p>`:''}<pre>${esc(p.text)}</pre></div></details>`).join('')}</div></div>`:'')+
+   (c.closing?`<p class="closing">${esc(c.closing)}</p>`:'')+
+   `<div class="pager">${prev?`<button type="button" data-open="${prev.id}"><small>← Назад</small><span>${esc(prev.title)}</span></button>`:'<span></span>'}${next?`<button type="button" class="next" data-open="${next.id}"><small>Дальше →</small><span>${esc(next.title)}</span></button>`:''}</div>`;
+  $$('.prompt',t).forEach(d=>d.addEventListener('click',e=>{const b=e.target.closest('[data-copy]');if(b){e.preventDefault();e.stopPropagation();copyText(c.prompts[+b.dataset.copy].text,b,$('pre',d))}}));
+  const first=(c.prompts||[]).findIndex(p=>p.item===0);openPromptByIndex(first>=0?first:0);
+}
+function openPromptByIndex(k){$$('#prompts .prompt').forEach((d,j)=>d.open=j===k)}
+function openPromptFor(idx){const c=BY[state.open];if(!c)return;const k=(c.prompts||[]).findIndex(p=>p.item===idx);if(k>=0)openPromptByIndex(k)}
+
+/* viewers */
+function buildViewer(v,root,onSel){
+  if(v.kind==='stage')return stage(v,root,onSel);
+  if(v.kind==='carousel')return carousel(v,root,onSel);
+  if(v.kind==='video')return video(v,root);
+}
+function stage(v,root,onSel){
+  let cur=0,sub=0;
+  root.innerHTML=`<div class="tabs" role="tablist"></div><div class="pane"></div>`;
+  const tabs=$('.tabs',root),pane=$('.pane',root);
+  tabs.innerHTML=v.items.map((it,i)=>`<button type="button" role="tab" data-i="${i}">${esc(it.label)}</button>`).join('');
+  if(v.items.length<2)tabs.hidden=true;
+  function draw(){
+    $$('button',tabs).forEach((b,i)=>b.setAttribute('aria-selected',i===cur));
+    const it=v.items[cur],n=(it.imgs||[]).length;
+    const fig=(m,cap)=>`<figure><div class="frame"><button class="zoomable" type="button" data-zoom="${m.id}" aria-label="Увеличить"><img src="${src(m.id)}" alt="${esc(m.label||it.label)}" decoding="async"></button></div>${cap&&m.label?`<figcaption>${esc(m.label)}</figcaption>`:''}</figure>`;
+    let h;
+    if(it.video)h=`<div class="solo"><div class="vbox"><video src="media/${it.video}.mp4" poster="media/${it.video}.jpg" controls playsinline loop preload="metadata"></video></div></div>`;
+    else if(n===1)h=fig(it.imgs[0],false);
+    else if(n===2)h=`<div class="pair">${it.imgs.map(m=>fig(m,true)).join('')}</div>`;
+    else{sub=Math.min(sub,n-1);const m=it.imgs[sub];
+      h=`<div class="film"><figure><div class="frame"><button class="zoomable" type="button" data-zoom="${m.id}" aria-label="Увеличить"><img src="${src(m.id)}" alt="${esc(m.label||it.label)}" decoding="async"></button></div></figure><div class="thumbs" style="--n:${n}">${it.imgs.map((x,j)=>`<button type="button" data-sub="${j}" aria-current="${j===sub}"><img src="${thumb(x.id)}" alt="" loading="lazy"><span>${esc(x.label||('Кадр '+(j+1)))}</span></button>`).join('')}</div></div>`}
+    pane.innerHTML=h+(it.caption?`<p class="cap">${esc(it.caption)}</p>`:'');
+  }
+  tabs.addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;cur=+b.dataset.i;sub=0;draw();onSel(cur)});
+  pane.addEventListener('click',e=>{const s=e.target.closest('[data-sub]');if(s){sub=+s.dataset.sub;draw();return}const z=e.target.closest('[data-zoom]');if(z)zoomOpen(src(z.dataset.zoom))});
+  draw();
+  const go=d=>{cur=(cur+d+v.items.length)%v.items.length;sub=0;draw();onSel(cur)};
+  return{prev:()=>go(-1),next:()=>go(1)};
+}
+function carousel(v,root,onSel){
+  let cur=0;const items=v.items,n=items.length;
+  root.innerHTML=`<div class="car"><div class="frame stage" style="--ratio:${v.ratio}"><button class="zoomable" type="button" aria-label="Увеличить" style="height:100%"><img alt="" decoding="async"></button>${n>1?`<button class="arr l" type="button" aria-label="Назад">${ARR_L}</button><button class="arr r" type="button" aria-label="Дальше">${ARR_R}</button><span class="ct"></span>`:''}</div><p class="cap"></p>${n>1?`<div class="strip">${items.map((it,i)=>`<button type="button" data-i="${i}" aria-label="Слайд ${i+1}"><img src="${thumb(it.img)}" alt="" loading="lazy"></button>`).join('')}</div>`:''}</div>`;
+  const img=$('.stage img',root);
+  function draw(){const it=items[cur];img.src=src(it.img);img.alt=it.cap||'';$('.cap',root).textContent=it.cap||'';const ct=$('.ct',root);if(ct)ct.textContent=`${cur+1} / ${n}`;
+    $$('.strip button',root).forEach((b,i)=>{b.setAttribute('aria-current',i===cur);if(i===cur)b.scrollIntoView({block:'nearest',inline:'nearest'})})}
+  const go=d=>{cur=(cur+d+n)%n;draw();onSel(cur)};
+  const set=i=>{cur=i;draw();onSel(cur)};
+  root.addEventListener('click',e=>{if(e.target.closest('.arr.l'))go(-1);else if(e.target.closest('.arr.r'))go(1);else{const b=e.target.closest('.strip [data-i]');if(b)set(+b.dataset.i);else if(e.target.closest('.zoomable'))zoomOpen(src(items[cur].img))}});
+  let x0=null;const st=$('.stage',root);
+  st.addEventListener('pointerdown',e=>x0=e.clientX);
+  st.addEventListener('pointerup',e=>{if(x0==null)return;const dx=e.clientX-x0;x0=null;if(Math.abs(dx)>50&&n>1){e.preventDefault();go(dx<0?1:-1)}});
+  draw();
+  return{prev:()=>go(-1),next:()=>go(1)};
+}
+function video(v,root){
+  const segs=v.segs;
+  root.innerHTML=`${v.ref?`<figure class="refwide"><div class="refimg"><button class="zoomable" type="button" data-zoom="${v.ref}" aria-label="Увеличить"><img src="${src(v.ref)}" alt="Референс изделия"></button></div><figcaption class="cap">Референс: коллаж с видами изделия</figcaption></figure>`:''}<div class="vids">${v.videos.map((m,i)=>`<figure><div class="vbox"><video src="media/${m}.mp4" poster="media/${m}.jpg" muted loop playsinline preload="metadata"></video><button class="snd" type="button">Звук</button></div><figcaption class="cap">Версия ${i+1}</figcaption></figure>`).join('')}</div>
+   <div class="vctl"><button type="button" id="vPlay">Пауза</button><span class="cap" style="margin:0">Оба ролика сделаны по одному промпту</span></div>
+   <div class="segs">${segs.map((s,i)=>`<button type="button" class="seg" data-i="${i}" aria-current="false"><span class="tm">${s.t}</span><span><b>${esc(s.h)}</b><span class="d">${esc(s.d)}</span></span></button>`).join('')}</div>`;
+  const vids=$$('video',root);let playing=true,io;
+  const act=t=>{const k=segs.findIndex(s=>t>=s.a&&t<s.b);$$('.seg',root).forEach((b,i)=>b.setAttribute('aria-current',i===(k<0?segs.length-1:k)))};
+  vids[0].addEventListener('timeupdate',()=>act(vids[0].currentTime));
+  const playAll=()=>{vids.forEach(x=>x.play().catch(()=>{}))},pauseAll=()=>vids.forEach(x=>x.pause());
+  $('#vPlay',root).addEventListener('click',e=>{playing=!playing;if(playing){playAll();e.target.textContent='Пауза'}else{pauseAll();e.target.textContent='Играть'}});
+  root.addEventListener('click',e=>{
+    const sg=e.target.closest('.seg');if(sg){const t=segs[+sg.dataset.i].a;vids.forEach(x=>x.currentTime=t);if(playing)playAll();return}
+    const sn=e.target.closest('.snd');if(sn){const vb=sn.previousElementSibling;vb.muted=!vb.muted;sn.textContent=vb.muted?'Звук':'Без звука';if(!vb.muted)vids.forEach(x=>{if(x!==vb)x.muted=true});$$('.snd',root).forEach(b=>{if(b!==sn)b.textContent='Звук'});return}
+    const z=e.target.closest('[data-zoom]');if(z)zoomOpen(src(z.dataset.zoom))});
+  io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting&&playing)playAll();else pauseAll()})},{threshold:.35});io.observe(vids[0]);
+  act(0);
+  return{stop(){io.disconnect();pauseAll()},prev(){},next(){}};
+}
+
+/* zoom */
+function zoomOpen(s){const z=$('#zoom');$('img',z).src=s;z.hidden=false}
+function zoomClose(){$('#zoom').hidden=true}
+$('#zoom').addEventListener('click',zoomClose);
+document.addEventListener('click',e=>{const z=e.target.closest('[data-zoomimg]');if(z)zoomOpen(z.dataset.zoomimg)});
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!$('#zoom').hidden)zoomClose();else if(state.open)requestClose();return}
+  if(!state.open||!state.api||!$('#zoom').hidden)return;
+  if(e.target.closest&&e.target.closest('pre,input,textarea'))return;
+  if(e.key==='ArrowLeft')state.api.prev&&state.api.prev();
+  if(e.key==='ArrowRight')state.api.next&&state.api.next();
+});
+
+/* live background: soft orbs drift, flee the pointer, and a warm glow follows it. Pauses while a post is open. */
+(function(){
+  const cv=$('#bg'),cx=cv.getContext('2d');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SC=.4;let W=1,H=1,t=0,tx=.7,ty=.25,gx=.7,gy=.25,sy=0,raf=0;
+  const O=[[218,158,56,.30,.20,.34,.9],[147,160,189,.80,.18,.38,.7],[165,101,78,.18,.62,.30,1.1],[147,160,189,.12,.12,.28,.8],
+           [218,158,56,.85,.70,.32,.6],[165,101,78,.62,.88,.30,1.0],[94,52,43,.45,.40,.22,.5],[147,160,189,.40,.95,.30,.75]]
+    .map((o,i)=>({c:o.slice(0,3),bx:o[3],by:o[4],r:o[5],sp:o[6]*.22,ph:i*1.7,ox:0,oy:0}));
+  const dark=()=>{const d=document.documentElement.dataset.theme;return d?d==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
+  function size(){W=cv.width=Math.max(1,Math.round(innerWidth*SC));H=cv.height=Math.max(1,Math.round(innerHeight*SC))}
+  function frame(){
+    if(!reduce)raf=requestAnimationFrame(frame);
+    if(document.body.classList.contains('lock'))return;
+    t+=.016;gx+=(tx-gx)*.08;gy+=(ty-gy)*.08;
+    const dk=dark(),a=dk?.34:.46;
+    cx.clearRect(0,0,W,H);cx.globalCompositeOperation=dk?'screen':'source-over';
+    for(const o of O){
+      let x=o.bx+.09*Math.sin(t*o.sp+o.ph),y=o.by+.07*Math.cos(t*o.sp*1.3+o.ph)-sy*.05*o.sp;
+      const dx=x-gx,dy=(y-gy)*H/W,d=Math.hypot(dx,dy)+1e-4,f=Math.exp(-d*d/.05)*.16;
+      o.ox+=(dx/d*f-o.ox)*.06;o.oy+=(dy/d*f-o.oy)*.06;x+=o.ox;y+=o.oy*W/H;
+      const px=x*W,py=y*H,r=o.r*Math.max(W,H),g=cx.createRadialGradient(px,py,0,px,py,r),[R,G,B]=o.c,al=dk&&R<100?a*.6:a;
+      g.addColorStop(0,`rgba(${R},${G},${B},${al})`);g.addColorStop(1,`rgba(${R},${G},${B},0)`);
+      cx.fillStyle=g;cx.fillRect(px-r,py-r,r*2,r*2);
+    }
+    const r=.32*Math.min(W,H)*1.6,g=cx.createRadialGradient(gx*W,gy*H,0,gx*W,gy*H,r);
+    g.addColorStop(0,`rgba(218,158,56,${dk?.5:.6})`);g.addColorStop(1,'rgba(218,158,56,0)');
+    cx.fillStyle=g;cx.fillRect(gx*W-r,gy*H-r,r*2,r*2);
+  }
+  addEventListener('pointermove',e=>{tx=e.clientX/innerWidth;ty=e.clientY/innerHeight;if(reduce)frame()},{passive:true});
+  addEventListener('scroll',()=>{sy=scrollY/innerHeight},{passive:true});
+  addEventListener('resize',()=>{size();if(reduce)frame()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!reduce){cancelAnimationFrame(raf);raf=requestAnimationFrame(frame)}});
+  size();frame();
+})();
+
+renderFilters();renderGrid();route();
+(function(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window))return;
+  const els=$$('.card,.step,.tcard,.sec-head,.about>*,.appgrid>*,.cbox,.cline');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target;el.classList.add('in');io.unobserve(el);setTimeout(()=>{el.style.animationDelay=''},1200)}}),{threshold:.1,rootMargin:'0px 0px -5% 0px'});
+  els.forEach((el,i)=>{el.classList.add('rv');el.style.animationDelay=((i%3)*80)+'ms';io.observe(el)});
+})();
+</script>
+
+</body>
+</html>
